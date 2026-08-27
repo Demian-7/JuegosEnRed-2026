@@ -1,8 +1,12 @@
 using Fusion;
+using Fusion;
 using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.InputSystem;
+using UnityEngine.InputSystem.LowLevel;
 
 public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -18,6 +22,9 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     [ContextMenu("Start as Host")]
     public async void StartGameHost()
     {
+
+        _runner.ProvideInput = true;
+
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Host,
@@ -29,6 +36,9 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     [ContextMenu("Start as Client")]
     public async void StartGameClient() 
     {
+
+        _runner.ProvideInput = true;
+
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Client,
@@ -101,7 +111,34 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 
     public void OnInput(NetworkRunner runner, NetworkInput input)
     {
-        
+        // Preparar inputs locales
+        Vector2 Direction = Vector2.zero;
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            Direction.y += 1;
+        }
+        if (Input.GetKey(KeyCode.S))
+        {
+            Direction.y -= 1;
+        }
+        if (Input.GetKey(KeyCode.D))
+        {
+            Direction.x += 1;
+        }
+        if (Input.GetKey(KeyCode.A))
+        {
+            Direction.x -= 1;
+        }
+
+
+        // Crear network input data
+        NetworkInputData data = new NetworkInputData();
+        data.Direction = Direction;
+
+        data.Buttons.Set((int)InputButton.Shoot, Input.GetKey(KeyCode.Space));
+        // Enviar network input data
+        input.Set(data);
     }
 
     public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)

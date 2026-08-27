@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 3156609609844463442}
   - component: {fileID: 64014500229700714}
   - component: {fileID: 6820043559577940876}
+  - component: {fileID: 2748885814005271864}
   m_Layer: 0
   m_Name: NetworkPlayer
   m_TagString: Untagged
@@ -52,6 +53,7 @@ MonoBehaviour:
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 6820043559577940876}
+  - {fileID: 2748885814005271864}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &6820043559577940876
 MonoBehaviour:
@@ -70,6 +72,21 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
+--- !u!114 &2748885814005271864
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8805045330618663036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 819e21c724dddc245a8cb3d83275c4a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  _speed: 5
+  _bulletPrefab:
+    RawGuidValue: b75ada08040058840a8d58f63c47055e
 --- !u!1 &9036221834142700755
 GameObject:
   m_ObjectHideFlags: 0
