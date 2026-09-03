@@ -1,12 +1,8 @@
 using Fusion;
-using Fusion;
 using Fusion.Sockets;
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.InputSystem;
-using UnityEngine.InputSystem.LowLevel;
 
 public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
 {
@@ -20,7 +16,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
     }
 
     [ContextMenu("Start as Host")]
-    public async void StartGameHost()
+    public async void StartGameHost(string sessionName)
     {
 
         _runner.ProvideInput = true;
@@ -28,13 +24,13 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Host,
-            SessionName = "Partida1"
+            SessionName = sessionName
 
         });
     }
 
     [ContextMenu("Start as Client")]
-    public async void StartGameClient() 
+    public async void StartGameClient(string sessionName) 
     {
 
         _runner.ProvideInput = true;
@@ -42,7 +38,7 @@ public class NetworkManager : MonoBehaviour, INetworkRunnerCallbacks
         await _runner.StartGame(new StartGameArgs()
         {
             GameMode = GameMode.Client,
-            SessionName = "Partida1"
+            SessionName = sessionName
 
         });
 
