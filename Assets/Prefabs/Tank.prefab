@@ -11,9 +11,10 @@ GameObject:
   - component: {fileID: 3156609609844463442}
   - component: {fileID: 64014500229700714}
   - component: {fileID: 6820043559577940876}
-  - component: {fileID: 2748885814005271864}
+  - component: {fileID: 7017638642325000099}
+  - component: {fileID: 938001107232714999}
   m_Layer: 0
-  m_Name: NetworkPlayer
+  m_Name: Tank
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -47,13 +48,14 @@ MonoBehaviour:
   m_Script: {fileID: -1552182283, guid: e725a070cec140c4caffb81624c8c787, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkObject
-  SortKey: 1262921255
+  SortKey: 2893833901
   ObjectInterest: 1
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
   - {fileID: 6820043559577940876}
-  - {fileID: 2748885814005271864}
+  - {fileID: 7017638642325000099}
+  - {fileID: 938001107232714999}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &6820043559577940876
 MonoBehaviour:
@@ -72,7 +74,7 @@ MonoBehaviour:
   SyncParent: 0
   _autoAOIOverride: 1
   DisableSharedModeInterpolation: 0
---- !u!114 &2748885814005271864
+--- !u!114 &7017638642325000099
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -81,12 +83,30 @@ MonoBehaviour:
   m_GameObject: {fileID: 8805045330618663036}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 819e21c724dddc245a8cb3d83275c4a3, type: 3}
+  m_Script: {fileID: 11500000, guid: b83dbb91d0554b5081747f285ef3c3b3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  m_EditorClassIdentifier: Assembly-CSharp::NetworkPlayerState
+  _PlayerName:
+    _length: 11
+    _data:
+      Data: 5400000072000000750000006500000020000000430000006c00000069000000650000006e00000074000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+  _IsReady:
+    _value: 0
+  _IsHost:
+    _value: 0
+--- !u!114 &938001107232714999
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8805045330618663036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 086cd987e3da415ebe6b7ddab32f5df4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::TankController
   _speed: 5
-  _bulletPrefab:
-    RawGuidValue: b75ada08040058840a8d58f63c47055e
 --- !u!1 &9036221834142700755
 GameObject:
   m_ObjectHideFlags: 0
