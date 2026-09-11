@@ -4,26 +4,29 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
-public class LobbyManager : MonoBehaviour
+namespace Game.Meta
 {
-    [Tooltip("The build index of your actual gameplay arena scene")]
-    [SerializeField] private int _gameplaySceneIndex = 1;
-
-    private void Awake()
+    public class LobbyManager : MonoBehaviour
     {
-        GetComponent<Button>().onClick.AddListener(StartMatch);
-    }
+        [Tooltip("The build index of your actual gameplay arena scene")] [SerializeField]
+        private int _gameplaySceneIndex = 1;
 
-    /// <summary>
-    /// Called by the "Start Match" UI Button.
-    /// Only the UI button on the Host's screen should be interactable.
-    /// </summary>
-    public void StartMatch()
-    {
-        var runner = FindAnyObjectByType<NetworkRunner>();
+        private void Awake()
+        {
+            GetComponent<Button>().onClick.AddListener(StartMatch);
+        }
 
-        runner.LoadScene(SceneRef.FromIndex(_gameplaySceneIndex));
+        /// <summary>
+        /// Called by the "Start Match" UI Button.
+        /// Only the UI button on the Host's screen should be interactable.
+        /// </summary>
+        public void StartMatch()
+        {
+            var runner = FindAnyObjectByType<NetworkRunner>();
 
-        Debug.Log("Host is starting the match. Loading arena...");
+            runner.LoadScene(SceneRef.FromIndex(_gameplaySceneIndex));
+
+            Debug.Log("Host is starting the match. Loading arena...");
+        }
     }
 }

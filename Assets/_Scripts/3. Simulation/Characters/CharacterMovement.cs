@@ -1,20 +1,24 @@
 ﻿using UnityEngine;
 using Fusion;
 
-[RequireComponent(typeof(Rigidbody2D))]
-public class CharacterMovement : NetworkBehaviour
+namespace Game.Simulation
 {
-    [SerializeField] private float _moveSpeed = 5f;
-    private Rigidbody2D _rb;
+    [RequireComponent(typeof(Rigidbody2D))]
 
-    private void Awake()
+    public class CharacterMovement : NetworkBehaviour
     {
-        _rb = GetComponent<Rigidbody2D>();
-    }
+        [SerializeField] private float _moveSpeed = 5f;
+        private Rigidbody2D _rb;
 
-    public void Simulate(Vector2 moveInput)
-    {
-        if (!Object.HasStateAuthority) return;
-        _rb.linearVelocity = moveInput * _moveSpeed;
+        private void Awake()
+        {
+            _rb = GetComponent<Rigidbody2D>();
+        }
+
+        public void Simulate(Vector2 moveInput)
+        {
+            if (!Object.HasStateAuthority) return;
+            _rb.linearVelocity = moveInput * _moveSpeed;
+        }
     }
 }

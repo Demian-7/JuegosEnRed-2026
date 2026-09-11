@@ -1,26 +1,29 @@
 ﻿using Fusion;
 using UnityEngine;
 
-public class NetworkPlayerState : NetworkBehaviour
+namespace Game.Core
 {
-    [Networked] public PlayerRef PlayerRef { get; set; }
-    [Networked] public NetworkString<_32> PlayerName { get; set; }
-    [Networked] public NetworkBool IsReady { get; set; }
-    [Networked] public NetworkBool IsHost { get; set; }
-
-    public override void Spawned()
+    public class NetworkPlayerState : NetworkBehaviour
     {
-        DontDestroyOnLoad(gameObject);
+        [Networked] public PlayerRef PlayerRef { get; set; }
+        [Networked] public NetworkString<_32> PlayerName { get; set; }
+        [Networked] public NetworkBool IsReady { get; set; }
+        [Networked] public NetworkBool IsHost { get; set; }
 
-        if (Object.HasStateAuthority)
+        public override void Spawned()
         {
-            PlayerRef = Object.InputAuthority;
-            
-            IsHost = (PlayerRef == Runner.LocalPlayer);
+            DontDestroyOnLoad(gameObject);
+
+            if (Object.HasStateAuthority)
+            {
+                PlayerRef = Object.InputAuthority;
+
+                IsHost = (PlayerRef == Runner.LocalPlayer);
+            }
+
+            Debug.Log($"Player {PlayerRef} joined the lobby. Host: {IsHost}");
+
+            // TODO: Register with a local UI Lobby Manager to update the visual roster
         }
-
-        Debug.Log($"Player {PlayerRef} joined the lobby. Host: {IsHost}");
-
-        // TODO: Register with a local UI Lobby Manager to update the visual roster
     }
 }

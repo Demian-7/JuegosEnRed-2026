@@ -1,15 +1,18 @@
 ﻿using Fusion;
 using UnityEngine;
 
-public class MatchSpawner : NetworkBehaviour, IPlayerJoined
+namespace Game.Meta
 {
-    [SerializeField] private NetworkPrefabRef _tankPrefab;
-
-    public void PlayerJoined(PlayerRef player)
+    public class MatchSpawner : NetworkBehaviour, IPlayerJoined
     {
-        if (Object.HasStateAuthority)
+        [SerializeField] private NetworkPrefabRef _tankPrefab;
+
+        public void PlayerJoined(PlayerRef player)
         {
-            Runner.Spawn(_tankPrefab, Vector3.zero, Quaternion.identity, player);
+            if (Object.HasStateAuthority)
+            {
+                Runner.Spawn(_tankPrefab, Vector3.zero, Quaternion.identity, player);
+            }
         }
     }
 }

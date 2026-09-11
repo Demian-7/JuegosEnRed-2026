@@ -2,52 +2,55 @@
 using Game.Foundation;
 using UnityEngine;
 
-public class TankController : NetworkBehaviour
+namespace Game.Simulation
 {
-    [Networked] public PlayerRef MovementSource { get; set; }
-    [Networked] public PlayerRef AbilitySource { get; set; }
-    [Networked] private NetworkButtons _previousButtons { get; set; }
-
-    [SerializeField] private CharacterMovement _movement;
-    
-    public override void Spawned()
+    public class TankController : NetworkBehaviour
     {
-        if (Object.HasStateAuthority)
-        {
-            MovementSource = Runner.LocalPlayer;
-            Debug.Log($"Movement assigned to Host: {MovementSource}");
-        }
-    }
+        [Networked] public PlayerRef MovementSource { get; set; }
+        [Networked] public PlayerRef AbilitySource { get; set; }
+        [Networked] private NetworkButtons _previousButtons { get; set; }
 
-    public override void FixedUpdateNetwork()
-    {
-        if (Object.HasStateAuthority && AbilitySource.IsNone && Runner.ActivePlayers != null)
+        [SerializeField] private CharacterMovement _movement;
+
+        public override void Spawned()
         {
-            foreach (var player in Runner.ActivePlayers)
+            if (Object.HasStateAuthority)
             {
-                if (player != MovementSource) 
-                {
-                    AbilitySource = player;
-                    Debug.Log($"Ability assigned to Client: {AbilitySource}");
-                    break;
-                }
+                MovementSource = Runner.LocalPlayer;
+                Debug.Log($"Movement assigned to Host: {MovementSource}");
             }
         }
 
-        if (Runner.TryGetInputForPlayer<NetworkInputData>(MovementSource, out var moveInput))
+        public override void FixedUpdateNetwork()
         {
-            _movement.Simulate(moveInput.MovementInput);
-        }
+            if (Object.HasStateAuthority && AbilitySource.IsNone && Runner.ActivePlayers != null)
+            {
+                foreach (var player in Runner.ActivePlayers)
+                {
+                    if (player != MovementSource)
+                    {
+                        AbilitySource = player;
+                        Debug.Log($"Ability assigned to Client: {AbilitySource}");
+                        break;
+                    }
+                }
+            }
 
-        if (Runner.TryGetInputForPlayer<NetworkInputData>(AbilitySource, out var abilityInput))
-        {
-            if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Dash))
-                Debug.Log($"Client {AbilitySource} triggered DASH!");
-            
-            if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Shoot))
-                Debug.Log($"Client {AbilitySource} triggered SHOOT!");
-            
-            _previousButtons = abilityInput.Buttons;
+            if (Runner.TryGetInputForPlayer<NetworkInputData>(MovementSource, out var moveInput))
+            {
+                _movement.Simulate(moveInput.MovementInput);
+            }
+
+            if (Runner.TryGetInputForPlayer<NetworkInputData>(AbilitySource, out var abilityInput))
+            {
+                if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Dash))
+                    Debug.Log($"Client {AbilitySource} triggered DASH!");
+
+                if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Shoot))
+                    Debug.Log($"Client {AbilitySource} triggered SHOOT!");
+
+                _previousButtons = abilityInput.Buttons;
+            }
         }
     }
 }
