@@ -44,10 +44,18 @@ namespace Game.Simulation
             if (Runner.TryGetInputForPlayer<NetworkInputData>(AbilitySource, out var abilityInput))
             {
                 if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Dash))
+                {
+                    // Ejecutar accion de dash en characterm movement  utilizando input de direccion
                     Debug.Log($"Client {AbilitySource} triggered DASH!");
+                }
+                    
 
                 if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Shoot))
+                {
                     Debug.Log($"Client {AbilitySource} triggered SHOOT!");
+                    // Invocar spawn de bala con la posicion del transform y la direccion de ability input mouse
+                }
+                    
 
                 _previousButtons = abilityInput.Buttons;
             }
