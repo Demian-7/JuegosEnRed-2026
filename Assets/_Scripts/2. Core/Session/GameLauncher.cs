@@ -10,6 +10,7 @@ namespace Game.Core
     public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     {
         [SerializeField] private NetworkPlayerState _playerStatePrefab;
+        [SerializeField] private Game.Foundation.LocalInputProvider _localInputProvider;
 
         private NetworkRunner _runner;
         private NetworkSceneManagerDefault _sceneManager;
@@ -18,11 +19,18 @@ namespace Game.Core
         {
             _runner = GetComponent<NetworkRunner>();
 
+            _runner.ProvideInput = true;
+
             // Added under guard to avoid duplicating.
             _sceneManager = GetComponent<NetworkSceneManagerDefault>();
             if (_sceneManager == null)
             {
                 _sceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>();
+            }
+
+            if (_localInputProvider != null)
+            {
+                _runner.AddCallbacks(_localInputProvider);
             }
         }
 

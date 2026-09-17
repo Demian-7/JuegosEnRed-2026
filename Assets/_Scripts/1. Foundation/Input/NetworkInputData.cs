@@ -13,7 +13,7 @@ namespace Game.Foundation
     public struct NetworkInputData : INetworkInput
     {
         public Vector2 MovementInput;
-        public Vector2 AimDirection;
+        public Vector2 AimWorldPosition;
         public NetworkButtons Buttons;
     }
 }
