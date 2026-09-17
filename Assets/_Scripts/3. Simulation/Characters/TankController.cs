@@ -12,19 +12,16 @@ namespace Game.Simulation
         [Networked] private NetworkButtons _previousButtons { get; set; }
 
         [SerializeField] private CharacterMovement _movement;
+        [SerializeField] private NetworkPrefabRef _bulletPrefab;
 
         // TEMPORARY: swap for the real TeamAssignmentService once it exists (Game.Meta).
-        // TankController shouldn't need to change when that happens, only this field.
         private ITeammatePairing _pairing = new StubTeammatePairing();
 
         public override void Spawned()
         {
             if (Object.HasStateAuthority)
             {
-                // Object.InputAuthority is who THIS tank belongs to (since MatchSpawner should spawn each
-                // tank with inputAuthority: player), not Runner.LocalPlayer, which would
-                // always resolve to the host, since state authority for every tank lives on
-                // the host regardless of which player it represents.
+                // Object.InputAuthority is who this tank belongs to
                 MovementSource = Object.InputAuthority;
                 Debug.Log($"Movement assigned to: {MovementSource}");
             }
@@ -50,10 +47,28 @@ namespace Game.Simulation
                     Debug.Log($"Client {AbilitySource} triggered DASH!");
 
                 if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Shoot))
-                    Debug.Log($"Client {AbilitySource} triggered SHOOT! In {MovementSource}'s entity!");
+                {
+                    Shoot(abilityInput.AimWorldPosition);
+                }
 
                 _previousButtons = abilityInput.Buttons;
             }
+        }
+
+        private void Shoot(Vector2 aimWorldPosition)
+        {
+            if (!Object.HasStateAuthority) return;
+
+            // Direction from this tank to where the teammate is aiming
+            Vector3 direction = (Vector3)aimWorldPosition - transform.position;
+            direction.z = 0f;
+            direction.Normalize();
+
+            // Spawn a bit in front so the bullet doesn't start inside the tank
+            Vector3 spawnPosition = transform.position + direction * 1f;
+
+            NetworkObject bullet = Runner.Spawn(_bulletPrefab, spawnPosition, Quaternion.identity);
+            bullet.GetComponent<Bullet>().Init(direction);
         }
     }
 }

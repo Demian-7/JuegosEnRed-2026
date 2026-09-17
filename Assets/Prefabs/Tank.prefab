@@ -116,6 +116,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::TankController
   _movement: {fileID: 5747639558527795611}
+  _bulletPrefab:
+    RawGuidValue: b75ada08040058840a8d58f63c47055e
 --- !u!114 &5747639558527795611
 MonoBehaviour:
   m_ObjectHideFlags: 0
