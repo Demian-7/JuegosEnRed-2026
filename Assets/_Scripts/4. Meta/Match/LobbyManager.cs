@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Fusion;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -8,13 +9,14 @@ namespace Game.Meta
 {
     public class LobbyManager : NetworkBehaviour
     {
-        private const int RequiredPlayers = 4;
+        private const int RequiredPlayers = 2;
 
         [Tooltip("The build index of the gameplay arena scene")] [SerializeField]
         private int _gameplaySceneIndex = 1;
 
 
         private Button _startButton;
+        private int _countPlayers => Runner.ActivePlayers.Count();
 
         private void Awake()
         {
@@ -22,15 +24,15 @@ namespace Game.Meta
             _startButton.onClick.AddListener(StartMatch);
         }
 
-        private int CountPlayers()
-        {
-            int count = 0;
-            foreach (var player in Runner.ActivePlayers)
-            {
-                count++;
-            }
-            return count;
-        }
+        //private int CountPlayers()
+        //{
+        //    int count = 0;
+        //    foreach (var player in Runner.ActivePlayers)
+        //    {
+        //        count++;
+        //    }
+        //    return count;
+        //}
 
         /// <summary>
         /// Called by the "Start Match" UI Button.
@@ -42,9 +44,9 @@ namespace Game.Meta
             if (Object == null || !Object.HasStateAuthority)
                 return;
 
-            if (CountPlayers() < RequiredPlayers)
+            if (_countPlayers < RequiredPlayers)
             {
-                Debug.Log($"Can't start: {CountPlayers()}/{RequiredPlayers} players.");
+                Debug.Log($"Can't start: {_countPlayers}/{RequiredPlayers} players.");
                 return;
             }
 

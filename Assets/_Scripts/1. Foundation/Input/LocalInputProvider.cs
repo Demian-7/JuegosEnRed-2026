@@ -12,7 +12,7 @@ namespace Game.Foundation
         private Vector2 _aimWorldPosition;
         private NetworkButtons _buttons;
 
-        private void Update()
+        private void ReadInput()
         {
             _moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
 
@@ -23,23 +23,19 @@ namespace Game.Foundation
             }
 
             _buttons.Set(EAbilityButton.Shoot, Input.GetMouseButton(0));
-
-            if (Input.GetKeyDown(KeyCode.Space))
-            {
-                _buttons.Set(EAbilityButton.Dash, true);
-            }
+            _buttons.Set(EAbilityButton.Dash, Input.GetKey(KeyCode.Space));
         }
 
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
+            ReadInput();
+
             input.Set(new NetworkInputData
             {
                 MovementInput = _moveInput,
                 AimWorldPosition = _aimWorldPosition,
                 Buttons = _buttons
             });
-
-            _buttons.Set(EAbilityButton.Dash, false);
         }
 
         #region Interface Methods

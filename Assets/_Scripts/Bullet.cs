@@ -14,13 +14,15 @@ public class Bullet : NetworkBehaviour
     {
         Direction = direction;
         LifeTimer = TickTimer.CreateFromSeconds(Runner, _lifetime);
+
+        GetComponent<Rigidbody>().linearVelocity = direction;
     }
 
     public override void FixedUpdateNetwork()
     {
-        if (!Object.HasStateAuthority) return;
+        //if (!Object.HasStateAuthority) return;
 
-        transform.position += Direction * _bulletSpeed * Runner.DeltaTime;
+        //transform.position += Direction * _bulletSpeed * Runner.DeltaTime;
 
         // TODO hit detection, and killing the tank
         if (LifeTimer.Expired(Runner))
