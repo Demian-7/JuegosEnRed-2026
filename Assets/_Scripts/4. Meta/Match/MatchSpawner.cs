@@ -1,18 +1,34 @@
-﻿using Fusion;
+using System.Collections.Generic;
+using Fusion;
 using UnityEngine;
 
 namespace Game.Meta
 {
-    public class MatchSpawner : NetworkBehaviour, IPlayerJoined
+    public class MatchSpawner : NetworkBehaviour
     {
         [SerializeField] private NetworkPrefabRef _tankPrefab;
+        [SerializeField] private Transform[] _spawnPoints;
+        private readonly List<NetworkObject> _tanks = new List<NetworkObject>();
 
-        public void PlayerJoined(PlayerRef player)
+        // Called by MatchManager at the start of every round.
+        public void SpawnAll()
         {
-            if (Object.HasStateAuthority)
+            int index = 0;
+            foreach (var player in Runner.ActivePlayers)
             {
-                Runner.Spawn(_tankPrefab, Vector3.zero, Quaternion.identity, player);
+                Vector3 position = _spawnPoints[index].position;
+                _tanks.Add(Runner.Spawn(_tankPrefab, position, Quaternion.identity, player));
+                index++;
             }
+        }
+
+        public void DespawnAll()
+        {
+            foreach (var tank in _tanks)
+            {
+                if (tank != null) Runner.Despawn(tank);
+            }
+            _tanks.Clear();
         }
     }
 }

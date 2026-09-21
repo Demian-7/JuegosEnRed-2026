@@ -9,20 +9,33 @@ namespace Game.Foundation
     public class LocalInputProvider : MonoBehaviour, INetworkRunnerCallbacks
     {
         private Vector2 _moveInput;
-        private Vector2 _aimInput;
+        private Vector2 _aimWorldPosition;
         private NetworkButtons _buttons;
 
-        private void Update()
+        private void ReadInput()
         {
             _moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
-        
-            _buttons.Set(EAbilityButton.Shoot, Input.GetButton("Fire1"));
-            _buttons.Set(EAbilityButton.Dash, Input.GetKeyDown(KeyCode.Space));
+
+            if (Camera.main != null)
+            {
+                Vector3 worldPoint = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                _aimWorldPosition = new Vector2(worldPoint.x, worldPoint.y);
+            }
+
+            _buttons.Set(EAbilityButton.Shoot, Input.GetMouseButton(0));
+            _buttons.Set(EAbilityButton.Dash, Input.GetKey(KeyCode.Space));
         }
 
         public void OnInput(NetworkRunner runner, NetworkInput input)
         {
-            input.Set(new NetworkInputData { MovementInput = _moveInput, Buttons = _buttons });
+            ReadInput();
+
+            input.Set(new NetworkInputData
+            {
+                MovementInput = _moveInput,
+                AimWorldPosition = _aimWorldPosition,
+                Buttons = _buttons
+            });
         }
 
         #region Interface Methods

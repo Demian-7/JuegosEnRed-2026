@@ -1,5 +1,6 @@
 ﻿using Fusion;
 using Game.Foundation;
+using Game.Meta;
 using UnityEngine;
 
 namespace Game.Simulation
@@ -11,29 +12,28 @@ namespace Game.Simulation
         [Networked] private NetworkButtons _previousButtons { get; set; }
 
         [SerializeField] private CharacterMovement _movement;
+        [SerializeField] private NetworkPrefabRef _bulletPrefab;
+
+        // TEMPORARY: swap for the real TeamAssignmentService once it exists (Game.Meta).
+        private ITeammatePairing _pairing = new StubTeammatePairing();
 
         public override void Spawned()
         {
             if (Object.HasStateAuthority)
             {
-                MovementSource = Runner.LocalPlayer;
-                Debug.Log($"Movement assigned to Host: {MovementSource}");
+                // Object.InputAuthority is who this tank belongs to
+                MovementSource = Object.InputAuthority;
+                Debug.Log($"Movement assigned to: {MovementSource}");
             }
         }
 
         public override void FixedUpdateNetwork()
         {
-            if (Object.HasStateAuthority && AbilitySource.IsNone && Runner.ActivePlayers != null)
+            if (Object.HasStateAuthority && AbilitySource.IsNone && !MovementSource.IsNone)
             {
-                foreach (var player in Runner.ActivePlayers)
-                {
-                    if (player != MovementSource)
-                    {
-                        AbilitySource = player;
-                        Debug.Log($"Ability assigned to Client: {AbilitySource}");
-                        break;
-                    }
-                }
+                AbilitySource = _pairing.GetAbilitySourceFor(MovementSource, Runner);
+                if (!AbilitySource.IsNone)
+                    Debug.Log($"Ability assigned to: {AbilitySource}");
             }
 
             if (Runner.TryGetInputForPlayer<NetworkInputData>(MovementSource, out var moveInput))
@@ -44,21 +44,31 @@ namespace Game.Simulation
             if (Runner.TryGetInputForPlayer<NetworkInputData>(AbilitySource, out var abilityInput))
             {
                 if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Dash))
-                {
-                    // Ejecutar accion de dash en characterm movement  utilizando input de direccion
                     Debug.Log($"Client {AbilitySource} triggered DASH!");
-                }
-                    
 
                 if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Shoot))
                 {
-                    Debug.Log($"Client {AbilitySource} triggered SHOOT!");
-                    // Invocar spawn de bala con la posicion del transform y la direccion de ability input mouse
+                    Shoot(abilityInput.AimWorldPosition);
                 }
-                    
 
                 _previousButtons = abilityInput.Buttons;
             }
+        }
+
+        private void Shoot(Vector2 aimWorldPosition)
+        {
+            if (!Object.HasStateAuthority) return;
+
+            // Direction from this tank to where the teammate is aiming
+            Vector3 direction = (Vector3)aimWorldPosition - transform.position;
+            direction.z = 0f;
+            direction.Normalize();
+
+            // Spawn a bit in front so the bullet doesn't start inside the tank
+            Vector3 spawnPosition = transform.position + direction * 1f;
+
+            NetworkObject bullet = Runner.Spawn(_bulletPrefab, spawnPosition, Quaternion.identity);
+            bullet.GetComponent<Bullet>().Init(direction);
         }
     }
 }

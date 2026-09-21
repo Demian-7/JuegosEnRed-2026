@@ -3,31 +3,26 @@ using Fusion;
 
 namespace Game.Simulation
 {
-    [RequireComponent(typeof(Rigidbody2D))]
-
+    //[RequireComponent(typeof(Rigidbody))]
     public class CharacterMovement : NetworkBehaviour
     {
         [SerializeField] private float _moveSpeed = 5f;
-        [SerializeField] private float _dashForce = 10f;
-        private Rigidbody2D _rb;
-
+        private Rigidbody _rb;
+ 
         private void Awake()
         {
-            _rb = GetComponent<Rigidbody2D>();
+            _rb = GetComponent<Rigidbody>();
         }
-
+ 
         public void Simulate(Vector2 moveInput)
         {
-            if (!Object.HasStateAuthority) return;
-            _rb.linearVelocity = moveInput * _moveSpeed;
-        }
+            //if (!Object.HasInputAuthority)
+            //    return;
 
-        public void DashAbility()
-        {
-            if (!Object.HasStateAuthority) return;
 
-            _rb.AddForce(Vector2.zero, ForceMode2D.Impulse);
-           
+            Debug.Log(moveInput);
+            //_rb.linearVelocity = moveInput * _moveSpeed;
+            transform.position += (Vector3)moveInput * Runner.DeltaTime;
         }
     }
 }

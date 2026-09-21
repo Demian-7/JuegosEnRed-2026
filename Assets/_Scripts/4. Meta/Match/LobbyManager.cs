@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using Fusion;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -6,15 +7,32 @@ using UnityEngine.UI;
 
 namespace Game.Meta
 {
-    public class LobbyManager : MonoBehaviour
+    public class LobbyManager : NetworkBehaviour
     {
-        [Tooltip("The build index of your actual gameplay arena scene")] [SerializeField]
+        private const int RequiredPlayers = 2;
+
+        [Tooltip("The build index of the gameplay arena scene")] [SerializeField]
         private int _gameplaySceneIndex = 1;
+
+
+        private Button _startButton;
+        private int _countPlayers => Runner.ActivePlayers.Count();
 
         private void Awake()
         {
-            GetComponent<Button>().onClick.AddListener(StartMatch);
+            _startButton = GetComponent<Button>();
+            _startButton.onClick.AddListener(StartMatch);
         }
+
+        //private int CountPlayers()
+        //{
+        //    int count = 0;
+        //    foreach (var player in Runner.ActivePlayers)
+        //    {
+        //        count++;
+        //    }
+        //    return count;
+        //}
 
         /// <summary>
         /// Called by the "Start Match" UI Button.
@@ -22,11 +40,30 @@ namespace Game.Meta
         /// </summary>
         public void StartMatch()
         {
-            var runner = FindAnyObjectByType<NetworkRunner>();
+            // host only
+            if (Object == null || !Object.HasStateAuthority)
+                return;
 
-            runner.LoadScene(SceneRef.FromIndex(_gameplaySceneIndex));
+            if (_countPlayers < RequiredPlayers)
+            {
+                Debug.Log($"Can't start: {_countPlayers}/{RequiredPlayers} players.");
+                return;
+            }
 
+            // close room when starting
+            Runner.SessionInfo.IsOpen = false;
+
+            Runner.LoadScene(SceneRef.FromIndex(_gameplaySceneIndex));
             Debug.Log("Host is starting the match. Loading arena...");
         }
+
+        public override void Spawned()
+        {
+            if (Object.HasStateAuthority)
+            {
+                Runner.SessionInfo.IsOpen = true;
+            }
+        }
+
     }
 }

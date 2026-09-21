@@ -10,19 +10,34 @@ namespace Game.Core
     public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     {
         [SerializeField] private NetworkPlayerState _playerStatePrefab;
+        [SerializeField] private Game.Foundation.LocalInputProvider _localInputProvider;
 
         private NetworkRunner _runner;
         private NetworkSceneManagerDefault _sceneManager;
 
+
+        // scene indexes, tbd if moved somewhere else
+        [SerializeField] private int _menuSceneIndex = 0;
+        [SerializeField] private int _lobbySceneIndex = 1;
+
+
+
         private void Awake()
         {
             _runner = GetComponent<NetworkRunner>();
+
+            _runner.ProvideInput = true;
 
             // Added under guard to avoid duplicating.
             _sceneManager = GetComponent<NetworkSceneManagerDefault>();
             if (_sceneManager == null)
             {
                 _sceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>();
+            }
+
+            if (_localInputProvider != null)
+            {
+                _runner.AddCallbacks(_localInputProvider);
             }
         }
 
@@ -34,6 +49,7 @@ namespace Game.Core
                 SessionName = roomCode,
                 PlayerCount = 4,
                 IsVisible = false,
+                Scene = SceneRef.FromIndex(_lobbySceneIndex),
                 SceneManager = _sceneManager
             });
 
@@ -66,7 +82,8 @@ namespace Game.Core
             if (_playerStatePrefab == null)
                 return;
 
-            var playerState = runner.Spawn(_playerStatePrefab, Vector3.zero, Quaternion.identity, player);
+            var playerState = runner.Spawn(_playerStatePrefab, Vector3.zero, Quaternion.identity, player,
+                               flags: NetworkSpawnFlags.DontDestroyOnLoad);
 
             runner.SetPlayerObject(player, playerState.Object);
         }
@@ -82,6 +99,13 @@ namespace Game.Core
             }
         }
 
+        public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
+        {
+            // destroy NetWorkRunner and go back to menu (which will create a new one)
+            Destroy(gameObject);
+            UnityEngine.SceneManagement.SceneManager.LoadScene(_menuSceneIndex);
+        }
+
         #region Unused Callbacks
 
         public void OnInput(NetworkRunner runner, NetworkInput input)
@@ -89,10 +113,6 @@ namespace Game.Core
         }
 
         public void OnInputMissing(NetworkRunner runner, PlayerRef player, NetworkInput input)
-        {
-        }
-
-        public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
         {
         }
 
