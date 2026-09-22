@@ -24,6 +24,8 @@ namespace Game.Simulation
                 // Object.InputAuthority is who this tank belongs to
                 MovementSource = Object.InputAuthority;
                 Debug.Log($"Movement assigned to: {MovementSource}");
+                GetComponent<HealthComponent>().Init(Object, Runner);
+
             }
         }
 
@@ -57,7 +59,8 @@ namespace Game.Simulation
 
         private void Shoot(Vector2 aimWorldPosition)
         {
-            if (!Object.HasStateAuthority) return;
+            if (!Object.HasStateAuthority) 
+                return;
 
             // Direction from this tank to where the teammate is aiming
             Vector3 direction = (Vector3)aimWorldPosition - transform.position;

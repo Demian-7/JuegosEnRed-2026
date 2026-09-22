@@ -14,7 +14,6 @@ namespace Game.Meta
         [Tooltip("The build index of the gameplay arena scene")] [SerializeField]
         private int _gameplaySceneIndex = 1;
 
-
         private Button _startButton;
         private int _countPlayers => Runner.ActivePlayers.Count();
 
@@ -23,16 +22,6 @@ namespace Game.Meta
             _startButton = GetComponent<Button>();
             _startButton.onClick.AddListener(StartMatch);
         }
-
-        //private int CountPlayers()
-        //{
-        //    int count = 0;
-        //    foreach (var player in Runner.ActivePlayers)
-        //    {
-        //        count++;
-        //    }
-        //    return count;
-        //}
 
         /// <summary>
         /// Called by the "Start Match" UI Button.
@@ -64,6 +53,5 @@ namespace Game.Meta
                 Runner.SessionInfo.IsOpen = true;
             }
         }
-
     }
 }

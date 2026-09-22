@@ -9,7 +9,7 @@ public class Bullet : NetworkBehaviour
     [Networked] private Vector3 Direction { get; set; }
     [Networked] private TickTimer LifeTimer { get; set; }
 
-    [SerializeField] private Rigidbody2D _rb;
+    private Rigidbody2D _rb;
     // Called by the tank right after spawning it (host only).
     private void Awake()
     {
@@ -28,7 +28,7 @@ public class Bullet : NetworkBehaviour
     {
         //if (!Object.HasStateAuthority) return;
 
-        _rb.linearVelocity = Direction * _bulletSpeed;
+        _rb.linearVelocity = Direction * _bulletSpeed * Runner.DeltaTime;
         //transform.position += Direction * _bulletSpeed * Runner.DeltaTime;
 
         // TODO hit detection, and killing the tank
@@ -36,5 +36,23 @@ public class Bullet : NetworkBehaviour
         {
             Runner.Despawn(Object);
         }
+    }
+
+
+    private void OnTriggerEnter2D(Collider2D collision)
+    {
+        if (!Object.HasStateAuthority)
+            return;
+
+        if (collision.TryGetComponent<IDamageable>(out var dmg))
+        {
+            dmg.DamageableHit();
+        }
+        else if (false)
+        {
+            //TODO: Colision con props destruibles
+        }
+
+        Runner.Despawn(Object);
     }
 }

@@ -10,9 +10,10 @@ GameObject:
   m_Component:
   - component: {fileID: 5372600007402458211}
   - component: {fileID: -5918920114890842338}
-  - component: {fileID: 2295732449757993558}
   - component: {fileID: 4527142813210434495}
   - component: {fileID: 1540624510959739053}
+  - component: {fileID: 3076853534297671607}
+  - component: {fileID: 7044043001029644441}
   m_Layer: 0
   m_Name: Bullet
   m_TagString: Untagged
@@ -34,7 +35,6 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3457930209285187761}
-  - {fileID: 962514728066862252}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &-5918920114890842338
@@ -54,26 +54,9 @@ MonoBehaviour:
   Flags: 262145
   NestedObjects: []
   NetworkedBehaviours:
-  - {fileID: 2295732449757993558}
   - {fileID: 4527142813210434495}
+  - {fileID: 3076853534297671607}
   ForceRemoteRenderTimeframe: 0
---- !u!114 &2295732449757993558
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4822339255194689265}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 158639473, guid: e725a070cec140c4caffb81624c8c787, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.NetworkTransform
-  _stateAuthorityChangeErrorCorrectionDelta: 0
-  SyncScale: 0
-  SyncParent: 0
-  _autoAOIOverride: 1
-  DisableSharedModeInterpolation: 0
 --- !u!114 &4527142813210434495
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -86,8 +69,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: eaed504284bf93546b7cd7d366e5e294, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Bullet
-  _bulletSpeed: 50
+  _bulletSpeed: 500
   _lifetime: 10
+  _rb: {fileID: 0}
 --- !u!50 &1540624510959739053
 Rigidbody2D:
   serializedVersion: 5
@@ -115,45 +99,36 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
---- !u!1 &6024867249982248222
-GameObject:
+--- !u!114 &3076853534297671607
+MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 962514728066862252}
-  - component: {fileID: 539300662206169919}
-  m_Layer: 0
-  m_Name: Collider
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &962514728066862252
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6024867249982248222}
-  serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 5372600007402458211}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!58 &539300662206169919
+  m_GameObject: {fileID: 4822339255194689265}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5e690b5fb1084f5ab1c86457af401d4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Addons.Physics::Fusion.Addons.Physics.NetworkRigidbody2D
+  _stateAuthorityChangeErrorCorrectionDelta: 0
+  SyncScale: 0
+  SyncParent: 1
+  _interpolationTarget: {fileID: 3457930209285187761}
+  UsePreciseRotation: 0
+  UseRenderSleepThresholds: 1
+  RenderThresholds:
+    UseEnergy: 1
+    Position: 0.01
+    Rotation: 0.01
+    Scale: 0.01
+--- !u!58 &7044043001029644441
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6024867249982248222}
+  m_GameObject: {fileID: 4822339255194689265}
   m_Enabled: 1
   serializedVersion: 3
   m_Density: 1
@@ -177,12 +152,12 @@ CircleCollider2D:
   m_CallbackLayers:
     serializedVersion: 2
     m_Bits: 4294967295
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0}
-  m_Radius: 0.15488385
+  m_Radius: 0.18
 --- !u!1 &7707441358332537587
 GameObject:
   m_ObjectHideFlags: 0
