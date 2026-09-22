@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Fusion;
 using Game.Core;
 using Game.Foundation;
+using Game.Simulation;
 using UnityEngine;
 
 namespace Game.Meta
@@ -51,6 +52,7 @@ namespace Game.Meta
             CurrentRound++;
             Phase = MatchPhase.Playing;
             _spawner.DespawnAll();
+            ClearRemainingBullets();
             _spawner.SpawnAll();
 
             AliveTeam0 = 2;
@@ -145,6 +147,20 @@ namespace Game.Meta
             else if (Phase == MatchPhase.Ended)
             {
                 Runner.LoadScene(SceneRef.FromIndex(_lobbySceneIndex));
+            }
+        }
+        
+        private void ClearRemainingBullets()
+        {
+            // Create a temporary list to safely iterate while the HashSet modifies itself
+            var bulletsToDespawn = new List<Bullet>(Bullet.ActiveBullets);
+            
+            foreach (var bullet in bulletsToDespawn)
+            {
+                if (bullet.Object != null && bullet.Object.IsValid)
+                {
+                    Runner.Despawn(bullet.Object);
+                }
             }
         }
     }
