@@ -121,6 +121,7 @@ namespace Game.Meta
             if (Phase == MatchPhase.Ended) 
                 return;
 
+            _spawner.DespawnAll();
             Debug.Log($"[Match] Match ended. Score {ScoreTeam0} - {ScoreTeam1}");
             Phase = MatchPhase.Ended;
             Timer = TickTimer.CreateFromSeconds(Runner, 3f);

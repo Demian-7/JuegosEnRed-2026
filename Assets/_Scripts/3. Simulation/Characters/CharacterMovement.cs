@@ -7,7 +7,9 @@ namespace Game.Simulation
     public class CharacterMovement : NetworkBehaviour
     {
         [SerializeField] private float _moveSpeed = 5f;
+        [SerializeField] private float _dashForce = 800f;
         private Rigidbody2D _rb;
+        private Vector2 _lastMoveInput;
  
         private void Awake()
         {
@@ -20,10 +22,16 @@ namespace Game.Simulation
             //if (!Object.HasInputAuthority)
             //    return;
 
-
+            _lastMoveInput = moveInput;
             //Debug.Log(moveInput);
             _rb.linearVelocity = moveInput * _moveSpeed * Runner.DeltaTime;
             //transform.position += (Vector3)moveInput * _moveSpeed * Runner.DeltaTime;
+        }
+
+        public void DashAction()
+        {
+            Debug.Log("Dash Action");
+            _rb.AddForce(_lastMoveInput * _dashForce, ForceMode2D.Impulse);
         }
     }
 }
