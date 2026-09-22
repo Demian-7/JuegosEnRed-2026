@@ -1,19 +1,38 @@
 using System.Linq;
 using Fusion;
-using TMPro;
 using UnityEngine;
 
 namespace Game.Presentation
 {
-    public class UIManager : NetworkBehaviour, IPlayerJoined
+    public class UIManager : NetworkBehaviour, IPlayerJoined, IPlayerLeft
     {
         [SerializeField] private TitleBehaviour _title;
 
-        private int _playerCount => Runner.ActivePlayers.Count();
-
-        public void PlayerJoined(PlayerRef _)
+        public override void Spawned()
         {
-            _title.UpdateText(_playerCount);
+            _title.UpdateText(Runner.ActivePlayers.Count());
+        }
+
+        public void PlayerJoined(PlayerRef player)
+        {
+            if (HasStateAuthority)
+            {
+                Rpc_UpdatePlayerCount(Runner.ActivePlayers.Count());
+            }
+        }
+
+        public void PlayerLeft(PlayerRef player)
+        {
+            if (HasStateAuthority)
+            {
+                Rpc_UpdatePlayerCount(Runner.ActivePlayers.Count());
+            }
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void Rpc_UpdatePlayerCount(int newCount)
+        {
+            _title.UpdateText(newCount);
         }
     }
 }

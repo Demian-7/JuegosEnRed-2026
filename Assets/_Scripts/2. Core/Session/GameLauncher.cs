@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Fusion;
 using Fusion.Sockets;
 using Game.Foundation;
@@ -7,13 +8,12 @@ using UnityEngine;
 
 namespace Game.Core
 {
-    [RequireComponent(typeof(NetworkRunner))]
     public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     {
         public IEventBus EventBus { get; private set; }
 
         [SerializeField] private NetworkPlayerState _playerStatePrefab;
-        [SerializeField] private Foundation.LocalInputProvider _localInputProvider;
+        [SerializeField] private LocalInputProvider _localInputProvider;
 
         private NetworkRunner _runner;
         private NetworkSceneManagerDefault _sceneManager;
@@ -22,31 +22,49 @@ namespace Game.Core
         [SerializeField] private int _menuSceneIndex = 0;
         [SerializeField] private int _lobbySceneIndex = 1;
 
-
+        private static GameLauncher _instance;
 
         private void Awake()
         {
-            _runner = GetComponent<NetworkRunner>();
+            if (_instance != null && _instance != this)
+            {
+                Destroy(gameObject);
+                return;
+            }
 
+            _instance = this;
+            DontDestroyOnLoad(gameObject);
+            
+            EventBus = new EventBus();
+        }
+        
+        private void CreateRunner()
+        {
+            if (_runner != null)
+            {
+                Destroy(_runner.gameObject);
+            }
+
+            var runnerGO = new GameObject("SessionRunner");
+            runnerGO.transform.SetParent(transform);
+
+            _runner = runnerGO.AddComponent<NetworkRunner>();
             _runner.ProvideInput = true;
 
-            EventBus = new EventBus();
-
-            // Added under guard to avoid duplicating.
-            _sceneManager = GetComponent<NetworkSceneManagerDefault>();
-            if (_sceneManager == null)
-            {
-                _sceneManager = gameObject.AddComponent<NetworkSceneManagerDefault>();
-            }
+            _sceneManager = runnerGO.AddComponent<NetworkSceneManagerDefault>();
 
             if (_localInputProvider != null)
             {
                 _runner.AddCallbacks(_localInputProvider);
             }
+    
+            _runner.AddCallbacks(this);
         }
 
-        public async void StartHost(string roomCode)
+        public async Task<StartGameResult> StartHost(string roomCode)
         {
+            CreateRunner();
+            
             var result = await _runner.StartGame(new StartGameArgs
             {
                 GameMode = GameMode.Host,
@@ -61,10 +79,14 @@ namespace Game.Core
                 Debug.Log($"Hosted room: {roomCode}. Waiting for players...");
             else
                 Debug.LogError($"Failed to Start Host: {result.ShutdownReason}");
+
+            return result;
         }
 
-        public async void StartClient(string roomCode)
+        public async Task<StartGameResult> StartClient(string roomCode)
         {
+            CreateRunner();
+            
             var result = await _runner.StartGame(new StartGameArgs
             {
                 GameMode = GameMode.Client,
@@ -76,6 +98,8 @@ namespace Game.Core
                 Debug.Log($"Joined room: {roomCode}");
             else
                 Debug.LogError($"Failed to Join: {result.ShutdownReason}");
+
+            return result;
         }
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
@@ -105,9 +129,15 @@ namespace Game.Core
 
         public void OnShutdown(NetworkRunner runner, ShutdownReason shutdownReason)
         {
-            // destroy NetWorkRunner and go back to menu (which will create a new one)
-            Destroy(gameObject);
-            UnityEngine.SceneManagement.SceneManager.LoadScene(_menuSceneIndex);
+            if (_runner != null)
+            {
+                Destroy(_runner.gameObject);
+            }
+    
+            if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != _menuSceneIndex)
+            {
+                UnityEngine.SceneManagement.SceneManager.LoadScene(_menuSceneIndex);
+            }
         }
 
         #region Unused Callbacks
