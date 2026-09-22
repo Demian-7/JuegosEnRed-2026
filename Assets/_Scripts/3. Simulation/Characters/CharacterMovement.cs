@@ -7,6 +7,7 @@ namespace Game.Simulation
     public class CharacterMovement : NetworkBehaviour
     {
         [SerializeField] private float _moveSpeed = 5f;
+        [SerializeField] private float _dashForce = 800f;
         private Rigidbody2D _rb;
         private Vector2 _lastMoveInput;
  
@@ -30,7 +31,7 @@ namespace Game.Simulation
         public void DashAction()
         {
             Debug.Log("Dash Action");
-            _rb.AddForce(_lastMoveInput, ForceMode2D.Impulse);
+            _rb.AddForce(_lastMoveInput * _dashForce, ForceMode2D.Impulse);
         }
     }
 }
