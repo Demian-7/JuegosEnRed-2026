@@ -8,6 +8,7 @@ namespace Game.Simulation
     {
         [SerializeField] private float _moveSpeed = 5f;
         private Rigidbody2D _rb;
+        private Vector2 _lastMoveInput;
  
         private void Awake()
         {
@@ -20,10 +21,16 @@ namespace Game.Simulation
             //if (!Object.HasInputAuthority)
             //    return;
 
-
+            _lastMoveInput = moveInput;
             //Debug.Log(moveInput);
             _rb.linearVelocity = moveInput * _moveSpeed * Runner.DeltaTime;
             //transform.position += (Vector3)moveInput * _moveSpeed * Runner.DeltaTime;
+        }
+
+        public void DashAction()
+        {
+            Debug.Log("Dash Action");
+            _rb.AddForce(_lastMoveInput, ForceMode2D.Impulse);
         }
     }
 }

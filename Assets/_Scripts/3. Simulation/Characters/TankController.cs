@@ -46,7 +46,9 @@ namespace Game.Simulation
             if (Runner.TryGetInputForPlayer<NetworkInputData>(AbilitySource, out var abilityInput))
             {
                 if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Dash))
-                    Debug.Log($"Client {AbilitySource} triggered DASH!");
+                {
+                    _movement.DashAction();
+                }
 
                 if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Shoot))
                 {
