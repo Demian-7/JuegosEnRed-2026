@@ -71,7 +71,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bullet
   _bulletSpeed: 500
   _lifetime: 10
-  _rb: {fileID: 0}
 --- !u!50 &1540624510959739053
 Rigidbody2D:
   serializedVersion: 5
@@ -156,8 +155,8 @@ CircleCollider2D:
   m_UsedByEffector: 0
   m_CompositeOperation: 0
   m_CompositeOrder: 0
-  m_Offset: {x: 0, y: 0}
-  m_Radius: 0.18
+  m_Offset: {x: -0.0019264817, y: 0}
+  m_Radius: 0.16844109
 --- !u!1 &7707441358332537587
 GameObject:
   m_ObjectHideFlags: 0

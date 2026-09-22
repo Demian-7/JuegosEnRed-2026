@@ -12,6 +12,7 @@ namespace Game.Simulation
         [Networked] private NetworkButtons _previousButtons { get; set; }
 
         [SerializeField] private CharacterMovement _movement;
+        [SerializeField] private AbilityController _ability;
         [SerializeField] private NetworkPrefabRef _bulletPrefab;
 
         // TEMPORARY: swap for the real TeamAssignmentService once it exists (Game.Meta).
@@ -52,28 +53,11 @@ namespace Game.Simulation
 
                 if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Shoot))
                 {
-                    Shoot(abilityInput.AimWorldPosition);
+                    _ability.TryShoot(abilityInput.AimWorldPosition);
                 }
 
                 _previousButtons = abilityInput.Buttons;
             }
-        }
-
-        private void Shoot(Vector2 aimWorldPosition)
-        {
-            if (!Object.HasStateAuthority) 
-                return;
-
-            // Direction from this tank to where the teammate is aiming
-            Vector3 direction = (Vector3)aimWorldPosition - transform.position;
-            direction.z = 0f;
-            direction.Normalize();
-
-            // Spawn a bit in front so the bullet doesn't start inside the tank
-            Vector3 spawnPosition = transform.position + direction * 1f;
-
-            NetworkObject bullet = Runner.Spawn(_bulletPrefab, spawnPosition, Quaternion.identity);
-            bullet.GetComponent<Bullet>().Init(direction);
         }
     }
 }
