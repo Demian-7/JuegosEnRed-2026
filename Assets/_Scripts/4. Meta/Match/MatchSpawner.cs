@@ -8,6 +8,7 @@ namespace Game.Meta
     {
         [SerializeField] private NetworkPrefabRef _tankPrefab;
         [SerializeField] private Transform[] _spawnPoints;
+
         private readonly List<NetworkObject> _tanks = new List<NetworkObject>();
 
         // Called by MatchManager at the start of every round.

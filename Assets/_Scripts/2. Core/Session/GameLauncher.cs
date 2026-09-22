@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Fusion;
 using Fusion.Sockets;
+using Game.Foundation;
 using UnityEngine;
 
 namespace Game.Core
@@ -9,12 +10,13 @@ namespace Game.Core
     [RequireComponent(typeof(NetworkRunner))]
     public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     {
+        public IEventBus EventBus { get; private set; }
+
         [SerializeField] private NetworkPlayerState _playerStatePrefab;
-        [SerializeField] private Game.Foundation.LocalInputProvider _localInputProvider;
+        [SerializeField] private Foundation.LocalInputProvider _localInputProvider;
 
         private NetworkRunner _runner;
         private NetworkSceneManagerDefault _sceneManager;
-
 
         // scene indexes, tbd if moved somewhere else
         [SerializeField] private int _menuSceneIndex = 0;
@@ -27,6 +29,8 @@ namespace Game.Core
             _runner = GetComponent<NetworkRunner>();
 
             _runner.ProvideInput = true;
+
+            EventBus = new EventBus();
 
             // Added under guard to avoid duplicating.
             _sceneManager = GetComponent<NetworkSceneManagerDefault>();

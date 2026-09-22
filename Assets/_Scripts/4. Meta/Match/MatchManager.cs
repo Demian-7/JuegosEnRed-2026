@@ -1,4 +1,6 @@
 using Fusion;
+using Game.Core;
+using Game.Foundation;
 using UnityEngine;
 
 namespace Game.Meta
@@ -25,7 +27,12 @@ namespace Game.Meta
         public override void Spawned()
         {
             if (Object.HasStateAuthority)
+            {
                 StartRound();
+
+                Runner.GetComponent<GameLauncher>().EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
+            }
+
         }
 
         private void Update()
@@ -37,6 +44,11 @@ namespace Game.Meta
             // DEBUG until characters can die: give the round to team 0 / team 1
             if (Input.GetKeyDown(KeyCode.Alpha1)) EndRound(0);
             if (Input.GetKeyDown(KeyCode.Alpha2)) EndRound(1);
+        }
+
+        private void OnPlayerDied(PlayerDiedEvent evt)
+        {
+            Debug.Log($"Player {evt.PlayerRef.Name} died!");
         }
 
         private void StartRound()
