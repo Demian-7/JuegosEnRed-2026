@@ -48,7 +48,7 @@ namespace Game.Simulation
             {
                 if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Dash))
                 {
-                    _movement.DashAction();
+                    _movement.TryDash();
                 }
 
                 if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Shoot))
