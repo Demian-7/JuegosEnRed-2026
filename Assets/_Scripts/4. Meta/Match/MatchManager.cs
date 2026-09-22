@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Fusion;
 using Game.Core;
 using Game.Foundation;
@@ -22,33 +23,27 @@ namespace Game.Meta
         [Networked] public int CurrentRound { get; set; }
         [Networked] public int ScoreTeam0 { get; set; }
         [Networked] public int ScoreTeam1 { get; set; }
+
+        [Networked] public int AliveTeam0 { get; set; }
+        [Networked] public int AliveTeam1 { get; set; }
         [Networked] private TickTimer Timer { get; set; }
 
         public override void Spawned()
         {
             if (Object.HasStateAuthority)
             {
+                Runner.GetComponentInParent<GameLauncher>().EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
                 StartRound();
-
-                Runner.GetComponent<GameLauncher>().EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
             }
-
         }
 
         private void Update()
         {
-            if (Object == null || !Object.HasStateAuthority) return;
+            if (Object == null || !Object.HasStateAuthority) 
+                return;
 
-            if (Input.GetKeyDown(KeyCode.Escape)) EndMatch();
-
-            // DEBUG until characters can die: give the round to team 0 / team 1
-            if (Input.GetKeyDown(KeyCode.Alpha1)) EndRound(0);
-            if (Input.GetKeyDown(KeyCode.Alpha2)) EndRound(1);
-        }
-
-        private void OnPlayerDied(PlayerDiedEvent evt)
-        {
-            Debug.Log($"Player {evt.PlayerRef.Name} died!");
+            if (Input.GetKeyDown(KeyCode.Escape)) 
+                EndMatch();
         }
 
         private void StartRound()
@@ -57,13 +52,59 @@ namespace Game.Meta
             Phase = MatchPhase.Playing;
             _spawner.DespawnAll();
             _spawner.SpawnAll();
+
+            AliveTeam0 = 2;
+            AliveTeam1 = 2;
+            
             Debug.Log($"[Match] Round {CurrentRound} started");
         }
 
+        private void OnPlayerDied(PlayerDiedEvent evt)
+        {
+            if (Phase != MatchPhase.Playing)
+                return;
+            
+            //"Emulate" StubTeammatePairing logic to find this player's team.
+            //When real TeamAssignmentService si built, use it instead.
+            var sorted = new List<PlayerRef>(Runner.ActivePlayers);
+            sorted.Sort((a, b) => a.PlayerId.CompareTo(b.PlayerId));
+
+            int index = sorted.IndexOf(evt.DeadPlayer);
+            if (index < 0)
+            {
+                Debug.LogError("Dead player's index is < 0??");
+                return;
+            }
+
+            //Players 0 & 1 are Team 0, players 2 & 3 are Team 1.
+            int teamId = (index < 2) ? 0 : 1;
+
+            if (teamId == 0)
+            {
+                AliveTeam0--;
+            }
+            else
+            {
+                AliveTeam1--;
+            }
+            
+            Debug.Log($"Player {evt.DeadPlayer} died. Team 0 Alive: {AliveTeam0}, Team 1 Alive: {AliveTeam1}");
+
+            if (AliveTeam0 <= 0)
+            {
+                EndRound(1);
+            }
+            else if (AliveTeam1 <= 0)
+            {
+                EndRound(0);
+            }
+        }
+        
         // Call this on the host when a team is fully dead.
         public void EndRound(int winnerTeam)
         {
-            if (Phase != MatchPhase.Playing) return;
+            if (Phase != MatchPhase.Playing) 
+                return;
 
             if (winnerTeam == 0) ScoreTeam0++;
             else ScoreTeam1++;
@@ -75,7 +116,8 @@ namespace Game.Meta
 
         public void EndMatch()
         {
-            if (Phase == MatchPhase.Ended) return;
+            if (Phase == MatchPhase.Ended) 
+                return;
 
             Debug.Log($"[Match] Match ended. Score {ScoreTeam0} - {ScoreTeam1}");
             Phase = MatchPhase.Ended;
@@ -90,7 +132,9 @@ namespace Game.Meta
 
         public override void FixedUpdateNetwork()
         {
-            if (!Object.HasStateAuthority || !Timer.Expired(Runner)) return;
+            if (!Object.HasStateAuthority || !Timer.Expired(Runner))
+                return;
+            
             Timer = TickTimer.None;
 
             if (Phase == MatchPhase.RoundEnded)

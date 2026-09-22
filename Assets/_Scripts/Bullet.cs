@@ -20,7 +20,9 @@ public class Bullet : NetworkBehaviour
     {
         Direction = direction;
         LifeTimer = TickTimer.CreateFromSeconds(Runner, _lifetime);
-
+        
+        _rb.linearVelocity = Vector2.zero;
+        _rb.angularVelocity = 0f;
         //GetComponent<Rigidbody>().linearVelocity = direction;
     }
 

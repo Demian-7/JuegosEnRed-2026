@@ -4,11 +4,11 @@ namespace Game.Foundation
 {
     public readonly struct PlayerDiedEvent
     {
-        public readonly NetworkObject PlayerRef;
+        public readonly PlayerRef DeadPlayer;
 
-        public PlayerDiedEvent(NetworkObject playerRef)
+        public PlayerDiedEvent(PlayerRef playerRef)
         {
-            PlayerRef = playerRef;
+            DeadPlayer = playerRef;
         }
     }
 }

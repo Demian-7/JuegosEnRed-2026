@@ -202,6 +202,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::GameLauncher
   _playerStatePrefab: {fileID: 2407495915640702063, guid: 282aa6925ef92134e97e23beed46189c, type: 3}
   _localInputProvider: {fileID: 243891367}
+  _runnerPrefab: {fileID: 390436160459306403, guid: 98d8ca38170afbf42ae9cdb10fcd7e92, type: 3}
   _menuSceneIndex: 0
   _lobbySceneIndex: 1
 --- !u!4 &170462031
@@ -1893,7 +1894,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bfa28dc3abb54600b9ac3c8137eae09f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.MainMenuUI
-  _gameLauncher: {fileID: 170462029}
   _roomCodeInput: {fileID: 683700840}
   _createButton: {fileID: 1347295011}
   _joinButton: {fileID: 466641820}

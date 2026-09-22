@@ -9,12 +9,13 @@ namespace Game.Presentation
     public class MainMenuUI : MonoBehaviour
     {
         [Header("References")]
-        [SerializeField] private GameLauncher _gameLauncher;
         [SerializeField] private TMP_InputField _roomCodeInput;
         [SerializeField] private Button _createButton;
         [SerializeField] private Button _joinButton;
         [SerializeField] private TextMeshProUGUI _feedbackText;
-
+        
+        private GameLauncher _gameLauncher;
+        
         private void OnEnable()
         {
             _createButton.onClick.AddListener(OnCreateClicked);
@@ -50,6 +51,11 @@ namespace Game.Presentation
 
         private async void OnCreateClicked()
         {
+            if (!_gameLauncher)
+            {
+                _gameLauncher = FindAnyObjectByType<GameLauncher>().GetComponent<GameLauncher>();
+            }
+            
             string roomCode = _roomCodeInput.text.Trim().ToUpper();
             
             SetConnectionState(true);
@@ -61,6 +67,11 @@ namespace Game.Presentation
 
         private async void OnJoinClicked()
         {
+            if (!_gameLauncher)
+            {
+                _gameLauncher = FindAnyObjectByType<GameLauncher>().GetComponent<GameLauncher>();
+            }
+            
             string roomCode = _roomCodeInput.text.Trim().ToUpper();
             
             SetConnectionState(true);

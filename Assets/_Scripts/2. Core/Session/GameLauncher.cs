@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using Fusion;
+using Fusion.Addons.Physics;
 using Fusion.Sockets;
 using Game.Foundation;
 using UnityEngine;
@@ -14,9 +15,11 @@ namespace Game.Core
 
         [SerializeField] private NetworkPlayerState _playerStatePrefab;
         [SerializeField] private LocalInputProvider _localInputProvider;
+        [SerializeField] private GameObject _runnerPrefab;
 
         private NetworkRunner _runner;
         private NetworkSceneManagerDefault _sceneManager;
+        private FusionObjectPool _objectPool;
 
         // scene indexes, tbd if moved somewhere else
         [SerializeField] private int _menuSceneIndex = 0;
@@ -36,6 +39,8 @@ namespace Game.Core
             DontDestroyOnLoad(gameObject);
             
             EventBus = new EventBus();
+
+            _objectPool = gameObject.AddComponent<FusionObjectPool>();
         }
         
         private void CreateRunner()
@@ -45,13 +50,12 @@ namespace Game.Core
                 Destroy(_runner.gameObject);
             }
 
-            var runnerGO = new GameObject("SessionRunner");
-            runnerGO.transform.SetParent(transform);
-
-            _runner = runnerGO.AddComponent<NetworkRunner>();
+            var runnerGO = Instantiate(_runnerPrefab, transform);
+            
+            _runner = runnerGO.GetComponent<NetworkRunner>();
             _runner.ProvideInput = true;
 
-            _sceneManager = runnerGO.AddComponent<NetworkSceneManagerDefault>();
+            _sceneManager = runnerGO.GetComponent<NetworkSceneManagerDefault>();
 
             if (_localInputProvider != null)
             {
@@ -72,7 +76,8 @@ namespace Game.Core
                 PlayerCount = 4,
                 IsVisible = false,
                 Scene = SceneRef.FromIndex(_lobbySceneIndex),
-                SceneManager = _sceneManager
+                SceneManager = _sceneManager,
+                ObjectProvider = _objectPool
             });
 
             if (result.Ok)
@@ -91,7 +96,8 @@ namespace Game.Core
             {
                 GameMode = GameMode.Client,
                 SessionName = roomCode,
-                SceneManager = _sceneManager
+                SceneManager = _sceneManager,
+                ObjectProvider = _objectPool
             });
 
             if (result.Ok)
@@ -133,6 +139,8 @@ namespace Game.Core
             {
                 Destroy(_runner.gameObject);
             }
+            
+            _objectPool.ClearPools();
     
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != _menuSceneIndex)
             {

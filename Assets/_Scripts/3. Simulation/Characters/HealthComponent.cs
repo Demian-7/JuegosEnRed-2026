@@ -16,7 +16,7 @@ public class HealthComponent : MonoBehaviour, IDamageable
 
     public void DamageableHit()
     {
-        _runner.GetComponent<GameLauncher>().EventBus.Publish(new PlayerDiedEvent(_parent));
+        _runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new PlayerDiedEvent(_parent.InputAuthority));
         _runner.Despawn(_parent);
     }
 }
