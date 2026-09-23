@@ -17,7 +17,8 @@ namespace Game.Simulation
         private Vector2 _lastMoveInput;
 
         private float _dashTimer = 0;
-        private bool _canDash = false;
+        [Networked, OnChangedRender(nameof(OnDashStateChanged))]
+        private bool CanDash { get; set; } = false;
         private void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
@@ -43,14 +44,13 @@ namespace Game.Simulation
         {
             Debug.Log("Dash Action");
             _rb.AddForce(_lastMoveInput * _dashForce, ForceMode2D.Impulse);
-            _canDash = false;
-            _runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new DashStateChangedEvent(_canDash));
+            CanDash = false;
         }
 
         public void TryDash()
         {
             // Si no puede dashear -> return
-            if (!(_canDash))
+            if (!(CanDash))
                 return;
 
             //Si puede dashear -> llamar a la accion
@@ -59,7 +59,7 @@ namespace Game.Simulation
 
         public override void FixedUpdateNetwork()
         {
-            if (!_canDash)
+            if (!CanDash)
             {
                 _dashTimer += Runner.DeltaTime;
 
@@ -72,9 +72,14 @@ namespace Game.Simulation
 
         private void EnableDash()
         {
-            _canDash = true;
+            CanDash = true;
             _dashTimer = 0;
-            _runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new DashStateChangedEvent(_canDash));
+            
+        }
+
+        private void OnDashStateChanged()
+        {
+            _runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new DashStateChangedEvent(CanDash));
         }
     }
 }

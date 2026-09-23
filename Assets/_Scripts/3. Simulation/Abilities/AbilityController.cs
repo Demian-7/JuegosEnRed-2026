@@ -108,7 +108,9 @@ public class AbilityController : NetworkBehaviour
     
     private void OnCurrentBulletsUpdatePublish()
     {
-        _runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new CurrentBulletsUpdateEvent(BulletCount));
+        Debug.Log("Change render bullet count");
+        
+        _runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new CurrentBulletsUpdateEvent(BulletCount));   
     }
 
     private void OnMaxBulletsUpdatePublish()

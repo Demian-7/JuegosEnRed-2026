@@ -63,9 +63,9 @@ public class HUDManager : MonoBehaviour
 
     private void OnDisable()
     {
-        _eventBus.Unsubscribe<MatchScoreUpdateEvent>(OnMatchStateUpdate);
-        _eventBus.Unsubscribe<CurrentBulletsUpdateEvent>(OnBulletsUpdate);
-        _eventBus.Unsubscribe<ReloadingStateChangedEvent>(OnUpdateReloadingState);
-        _eventBus.Unsubscribe<DashStateChangedEvent>(OnDashStateChanged);
+        _eventBus?.Unsubscribe<MatchScoreUpdateEvent>(OnMatchStateUpdate);
+        _eventBus?.Unsubscribe<CurrentBulletsUpdateEvent>(OnBulletsUpdate);
+        _eventBus?.Unsubscribe<ReloadingStateChangedEvent>(OnUpdateReloadingState);
+        _eventBus?.Unsubscribe<DashStateChangedEvent>(OnDashStateChanged);
     }
 }

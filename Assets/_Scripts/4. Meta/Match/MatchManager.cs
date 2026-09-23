@@ -37,11 +37,12 @@ namespace Game.Meta
                 Runner.GetComponentInParent<GameLauncher>().EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
 
                 //_hudManager.EventBus = Runner.GetComponentInParent<GameLauncher>().EventBus;
-                _hudManager.Init(Runner.GetComponentInParent<GameLauncher>().EventBus);
+                
                 
 
                 StartRound();
             }
+            _hudManager.Init(Runner.GetComponentInParent<GameLauncher>().EventBus);
         }
 
         private void Update()
