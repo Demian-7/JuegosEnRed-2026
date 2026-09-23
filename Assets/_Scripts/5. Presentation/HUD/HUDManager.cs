@@ -1,8 +1,10 @@
+using Game.Foundation;
 using TMPro;
 using UnityEngine;
 
 public class HUDManager : MonoBehaviour
 {
+    private IEventBus _eventBus;
     [SerializeField] private TMP_Text _actualBullets;
     [SerializeField] private TMP_Text _reloadingState;
     [SerializeField] private TMP_Text _dashState;
@@ -11,14 +13,25 @@ public class HUDManager : MonoBehaviour
     [SerializeField] private TMP_Text _x2;
 
 
-    public void UpdateBulletsCount(int actualBullets, int maxBullets)
+    public void Init(IEventBus eventBus)
     {
-        _actualBullets.text = $"{actualBullets} / {maxBullets}";
+        _eventBus = eventBus;
+        Debug.Log(_eventBus);
+        _eventBus.Subscribe<MatchScoreUpdateEvent>(OnMatchStateUpdate);
+        _eventBus.Subscribe<CurrentBulletsUpdateEvent>(OnBulletsUpdate);
+        _eventBus.Subscribe<ReloadingStateChangedEvent>(OnUpdateReloadingState);
+        _eventBus.Subscribe<DashStateChangedEvent>(OnDashStateChanged);
+        Debug.Log("Hud Manager start");
+    }
+    public void OnBulletsUpdate(CurrentBulletsUpdateEvent evt)
+    {
+        Debug.Log("OnBulletsUpdate");
+        _actualBullets.text = $"{evt.currentBullets} / 1";
     }
 
-    public void UpdateReloadingState(bool reloading) 
+    public void OnUpdateReloadingState(ReloadingStateChangedEvent evt) 
     {
-        if (reloading) 
+        if (evt.reloading) 
         {
             _reloadingState.text = "Reloading";
         }
@@ -31,9 +44,9 @@ public class HUDManager : MonoBehaviour
     }
 
 
-    public void UpdateDashState(bool canDash) 
+    public void OnDashStateChanged(DashStateChangedEvent evt) 
     {
-        if (canDash)
+        if (evt.canDash)
         {
             _dashState.text = "Ready";
         }
@@ -43,9 +56,16 @@ public class HUDManager : MonoBehaviour
 
         }
     }
-    public void UpdateMatchState(int scoreTeam0, int scoreTeam1) 
+    public void OnMatchStateUpdate(MatchScoreUpdateEvent evt) 
     {
-        _matchState.text = $"{scoreTeam0} - {scoreTeam1}";
+        _matchState.text = $"{evt.team0Rounds} - {evt.team1Rounds}";
     }
 
+    private void OnDisable()
+    {
+        _eventBus.Unsubscribe<MatchScoreUpdateEvent>(OnMatchStateUpdate);
+        _eventBus.Unsubscribe<CurrentBulletsUpdateEvent>(OnBulletsUpdate);
+        _eventBus.Unsubscribe<ReloadingStateChangedEvent>(OnUpdateReloadingState);
+        _eventBus.Unsubscribe<DashStateChangedEvent>(OnDashStateChanged);
+    }
 }

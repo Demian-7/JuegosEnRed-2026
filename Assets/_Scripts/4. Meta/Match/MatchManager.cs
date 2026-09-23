@@ -17,6 +17,7 @@ namespace Game.Meta
     public class MatchManager : NetworkBehaviour, IPlayerLeft
     {
         [SerializeField] private MatchSpawner _spawner;
+        [SerializeField] private HUDManager _hudManager;
         [SerializeField] private int _lobbySceneIndex = 1;
         [SerializeField] private int _totalRounds = 3;
 
@@ -34,6 +35,11 @@ namespace Game.Meta
             if (Object.HasStateAuthority)
             {
                 Runner.GetComponentInParent<GameLauncher>().EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
+
+                //_hudManager.EventBus = Runner.GetComponentInParent<GameLauncher>().EventBus;
+                _hudManager.Init(Runner.GetComponentInParent<GameLauncher>().EventBus);
+                
+
                 StartRound();
             }
         }
@@ -112,6 +118,8 @@ namespace Game.Meta
             else ScoreTeam1++;
 
             Debug.Log($"[Match] Round {CurrentRound} won by team {winnerTeam}. Score {ScoreTeam0} - {ScoreTeam1}");
+            Runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new MatchScoreUpdateEvent(ScoreTeam0, ScoreTeam1));
+
             Phase = MatchPhase.RoundEnded;
             Timer = TickTimer.CreateFromSeconds(Runner, 2f);
         }

@@ -183,6 +183,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Game.Simulation.CharacterMovement
   _moveSpeed: 150
   _dashForce: 100
+  _dashCooldown: 3
 --- !u!114 &4359779392069644949
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,9 +198,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::AbilityController
   _bulletPrefab:
     RawGuidValue: b75ada08040058840a8d58f63c47055e
-  _bulletCount: 1
-  _maxBullets: 1
-  reloadTime: 2
+  _BulletCount: 1
+  _MaxBullets: 1
+  _ReloadTime: 2
+  _Reloading: 0
 --- !u!58 &7393834299215248407
 CircleCollider2D:
   m_ObjectHideFlags: 0

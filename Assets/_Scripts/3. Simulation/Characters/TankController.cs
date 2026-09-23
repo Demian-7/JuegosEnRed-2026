@@ -30,6 +30,8 @@ namespace Game.Simulation
             }
 
             Colorize();
+            _movement.Init(Runner);
+            _ability.Init(Runner);
         }
 
         // Local-only tint: my tank blue, teammate's green, enemies red
