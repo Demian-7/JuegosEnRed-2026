@@ -38,6 +38,15 @@ namespace Game.Meta
             }
         }
 
+        public override void Despawned(NetworkRunner runner, bool hasState)
+        {
+            if (Object.HasStateAuthority)
+            {
+                runner.GetComponentInParent<GameLauncher>()?.EventBus
+                    .Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
+            }
+        }
+
         private void Update()
         {
             if (Object == null || !Object.HasStateAuthority) 
@@ -130,7 +139,11 @@ namespace Game.Meta
         public void PlayerLeft(PlayerRef player)
         {
             if (Object.HasStateAuthority)
+            {
+                Rpc_NotifyMatchAborted();
+                
                 EndMatch();
+            }
         }
 
         public override void FixedUpdateNetwork()
@@ -162,6 +175,15 @@ namespace Game.Meta
                 {
                     Runner.Despawn(bullet.Object);
                 }
+            }
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void Rpc_NotifyMatchAborted()
+        {
+            if (Runner.GetComponentInParent<GameLauncher>() != null)
+            {
+                Runner.GetComponentInParent<GameLauncher>().SetFeedback("A player disconnected. Match aborted.");
             }
         }
     }

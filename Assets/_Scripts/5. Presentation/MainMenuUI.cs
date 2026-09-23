@@ -15,6 +15,17 @@ namespace Game.Presentation
         [SerializeField] private TextMeshProUGUI _feedbackText;
         
         private GameLauncher _gameLauncher;
+
+        private void Start()
+        {
+            var launcher = FindAnyObjectByType<GameLauncher>();
+
+            string feedback = launcher.ConsumeFeedback();
+            if (!string.IsNullOrEmpty(feedback))
+            {
+                _feedbackText.text = feedback;
+            }
+        }
         
         private void OnEnable()
         {
