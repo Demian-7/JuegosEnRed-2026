@@ -9,8 +9,6 @@ public class HUDManager : MonoBehaviour
     [SerializeField] private TMP_Text _reloadingState;
     [SerializeField] private TMP_Text _dashState;
     [SerializeField] private TMP_Text _matchState;
-    [SerializeField] private TMP_Text _x1;
-    [SerializeField] private TMP_Text _x2;
 
 
     public void Init(IEventBus eventBus)
