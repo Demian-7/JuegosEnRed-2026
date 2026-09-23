@@ -28,12 +28,26 @@ namespace Game.Simulation
                 GetComponent<HealthComponent>().Init(Object, Runner);
 
             }
+
+            Colorize();
+        }
+
+        // Local-only tint: my tank blue, teammate's green, enemies red
+        // set by MatchSpawner before the tank is replicated, runs on every client.
+        private void Colorize()
+        {
+            Color color = Color.red;
+            if (MovementSource == Runner.LocalPlayer) color = Color.blue;
+            else if (AbilitySource == Runner.LocalPlayer) color = Color.green;
+
+            GetComponentInChildren<SpriteRenderer>().color = color;
         }
 
         public override void FixedUpdateNetwork()
         {
             if (Object.HasStateAuthority && AbilitySource.IsNone && !MovementSource.IsNone)
             {
+                // Fallback for tanks not spawned by MatchSpawner (which already sets both sources).
                 AbilitySource = _pairing.GetAbilitySourceFor(MovementSource, Runner);
                 if (!AbilitySource.IsNone)
                     Debug.Log($"Ability assigned to: {AbilitySource}");
