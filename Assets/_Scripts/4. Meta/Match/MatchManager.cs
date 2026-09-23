@@ -18,6 +18,7 @@ namespace Game.Meta
     {
         [SerializeField] private MatchSpawner _spawner;
         [SerializeField] private HUDManager _hudManager;
+        [SerializeField] private EndScreenManager _endScreenManager;
         [SerializeField] private int _lobbySceneIndex = 1;
         [SerializeField] private int _totalRounds = 3;
 
@@ -43,6 +44,7 @@ namespace Game.Meta
                 StartRound();
             }
             _hudManager.Init(Runner.GetComponentInParent<GameLauncher>().EventBus);
+            _endScreenManager.Init(Runner.GetComponentInParent<GameLauncher>().EventBus);
         }
 
         private void Update()
@@ -156,7 +158,8 @@ namespace Game.Meta
             }
             else if (Phase == MatchPhase.Ended)
             {
-                Runner.LoadScene(SceneRef.FromIndex(_lobbySceneIndex));
+                Runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new MatchEndedEvent(CalculateWinner()));
+
             }
         }
         
@@ -171,6 +174,23 @@ namespace Game.Meta
                 {
                     Runner.Despawn(bullet.Object);
                 }
+            }
+        }
+
+        public void ReturnToLobby()
+        {
+            Runner.LoadScene(SceneRef.FromIndex(_lobbySceneIndex));
+        }
+
+        private int CalculateWinner()
+        {
+            if (ScoreTeam0 > ScoreTeam1)
+            {
+                return 1;
+            }
+            else
+            {
+                return 2;
             }
         }
     }
