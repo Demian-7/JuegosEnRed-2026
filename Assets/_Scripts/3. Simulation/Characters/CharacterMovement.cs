@@ -1,5 +1,7 @@
-﻿using UnityEngine;
-using Fusion;
+﻿using Fusion;
+using Game.Core;
+using Game.Foundation;
+using UnityEngine;
 
 namespace Game.Simulation
 {
@@ -11,16 +13,22 @@ namespace Game.Simulation
         [SerializeField] private float _dashCooldown = 3f;
 
         private Rigidbody2D _rb;
+        private NetworkRunner _runner;
         private Vector2 _lastMoveInput;
 
         private float _dashTimer = 0;
-        private bool _canDash = false;
+        [Networked, OnChangedRender(nameof(OnDashStateChanged))]
+        private bool CanDash { get; set; } = false;
         private void Awake()
         {
             _rb = GetComponent<Rigidbody2D>();
             _rb.gravityScale = 0;
         }
  
+        public void Init(NetworkRunner runner)
+        {
+            _runner = runner;
+        }
         public void Simulate(Vector2 moveInput)
         {
             //if (!Object.HasInputAuthority)
@@ -36,13 +44,13 @@ namespace Game.Simulation
         {
             Debug.Log("Dash Action");
             _rb.AddForce(_lastMoveInput * _dashForce, ForceMode2D.Impulse);
-
+            CanDash = false;
         }
 
         public void TryDash()
         {
             // Si no puede dashear -> return
-            if (!(_canDash))
+            if (!(CanDash))
                 return;
 
             //Si puede dashear -> llamar a la accion
@@ -51,7 +59,7 @@ namespace Game.Simulation
 
         public override void FixedUpdateNetwork()
         {
-            if (!_canDash)
+            if (!CanDash)
             {
                 _dashTimer += Runner.DeltaTime;
 
@@ -64,8 +72,14 @@ namespace Game.Simulation
 
         private void EnableDash()
         {
-            _canDash = true;
+            CanDash = true;
             _dashTimer = 0;
+            
+        }
+
+        private void OnDashStateChanged()
+        {
+            _runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new DashStateChangedEvent(CanDash));
         }
     }
 }
