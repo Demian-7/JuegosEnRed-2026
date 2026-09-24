@@ -24,9 +24,15 @@ namespace Game.Meta
 
         [Networked] public MatchPhase Phase { get; set; }
         [Networked] public int CurrentRound { get; set; }
-        [Networked] public int ScoreTeam0 { get; set; }
-        [Networked] public int ScoreTeam1 { get; set; }
 
+        [Networked, OnChangedRender(nameof (OnMatchScoreUpdatePublish))] 
+        public int ScoreTeam0 { get; set; }
+
+        [Networked, OnChangedRender(nameof(OnMatchScoreUpdatePublish))] 
+        public int ScoreTeam1 { get; set; }
+
+        [Networked, OnChangedRender(nameof (OnMatchEndedEvent))]
+        public int Winner { get; set; }
         [Networked] public int AliveTeam0 { get; set; }
         [Networked] public int AliveTeam1 { get; set; }
         [Networked] private TickTimer Timer { get; set; }
@@ -121,7 +127,7 @@ namespace Game.Meta
             else ScoreTeam1++;
 
             Debug.Log($"[Match] Round {CurrentRound} won by team {winnerTeam}. Score {ScoreTeam0} - {ScoreTeam1}");
-            Runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new MatchScoreUpdateEvent(ScoreTeam0, ScoreTeam1));
+            
 
             Phase = MatchPhase.RoundEnded;
             Timer = TickTimer.CreateFromSeconds(Runner, 2f);
@@ -158,7 +164,8 @@ namespace Game.Meta
             }
             else if (Phase == MatchPhase.Ended)
             {
-                Runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new MatchEndedEvent(CalculateWinner()));
+                CalculateWinner();
+                
 
             }
         }
@@ -177,20 +184,30 @@ namespace Game.Meta
             }
         }
 
+        private void OnMatchScoreUpdatePublish()
+        {
+            Runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new MatchScoreUpdateEvent(ScoreTeam0, ScoreTeam1));
+        }
+
+        private void OnMatchEndedEvent()
+        {
+            Runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new MatchEndedEvent(Winner));
+        }
+
         public void ReturnToLobby()
         {
             Runner.LoadScene(SceneRef.FromIndex(_lobbySceneIndex));
         }
 
-        private int CalculateWinner()
+        private void CalculateWinner()
         {
             if (ScoreTeam0 > ScoreTeam1)
             {
-                return 1;
+                Winner = 1;
             }
             else
             {
-                return 2;
+                Winner = 2;
             }
         }
     }
