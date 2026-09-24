@@ -53,6 +53,14 @@ namespace Game.Meta
             _endScreenManager.Init(Runner.GetComponentInParent<GameLauncher>().EventBus);
         }
 
+        public override void Despawned(NetworkRunner runner, bool hasState)
+        {
+            if (Object.HasStateAuthority)
+            {
+                Runner.GetComponentInParent<GameLauncher>().EventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
+            }
+        }
+
         private void Update()
         {
             if (Object == null || !Object.HasStateAuthority) 
