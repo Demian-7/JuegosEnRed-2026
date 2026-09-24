@@ -1,3 +1,4 @@
+using System;
 using Game.Foundation;
 using TMPro;
 using UnityEngine;
@@ -11,12 +12,18 @@ public class EndScreenManager : MonoBehaviour
     [SerializeField] private Button _lobbyButton;
     [SerializeField] private Image _background;
 
-
+    private IEventBus _eventBus;
 
     public void Init(IEventBus eventBus)
     {
-        eventBus.Subscribe<MatchEndedEvent>(OnTeamWin);
+        _eventBus = eventBus;
+        _eventBus.Subscribe<MatchEndedEvent>(OnTeamWin);
         DeactivateElements();
+    }
+
+    public void OnDisable()
+    {
+        _eventBus.Unsubscribe<MatchEndedEvent>(OnTeamWin);
     }
 
     public void OnTeamWin(MatchEndedEvent evt)
