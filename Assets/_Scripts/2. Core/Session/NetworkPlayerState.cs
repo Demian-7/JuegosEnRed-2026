@@ -1,4 +1,5 @@
 ﻿using Fusion;
+using Game.Meta;
 using UnityEngine;
 
 namespace Game.Core
@@ -9,6 +10,7 @@ namespace Game.Core
         [Networked] public NetworkString<_32> PlayerName { get; set; }
         [Networked] public NetworkBool IsReady { get; set; }
         [Networked] public NetworkBool IsHost { get; set; }
+        [Networked] public byte TeamId { get; set; }
 
         public override void Spawned()
         {
@@ -17,14 +19,19 @@ namespace Game.Core
             if (Object.HasStateAuthority)
             {
                 PlayerRef = Object.InputAuthority;
-
-                IsHost = (PlayerRef == Runner.LocalPlayer);
+                IsHost = PlayerRef == Runner.LocalPlayer;
+                TeamId = MatchConstants.UNASSIGNED_TEAM;
             }
             
-
             Debug.Log($"Player {PlayerRef} joined the lobby. Host: {IsHost}");
+        }
 
-            // TODO: Register with a local UI Lobby Manager to update the visual roster
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        public void RPC_SetTeam(byte teamId)
+        {
+            //TODO: validation (team was already full) before assigning, or after, on Match Start.
+            
+            TeamId = teamId;
         }
 
         // called from Ready button on the client
