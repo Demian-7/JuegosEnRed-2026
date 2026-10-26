@@ -79,7 +79,7 @@ namespace Game.Simulation
 
         private void OnDashStateChanged()
         {
-            _runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new DashStateChangedEvent(CanDash));
+            GameLauncher.Instance.EventBus.Publish(new DashStateChangedEvent(CanDash));
         }
     }
 }

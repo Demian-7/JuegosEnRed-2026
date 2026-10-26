@@ -110,17 +110,17 @@ public class AbilityController : NetworkBehaviour
     {
         Debug.Log("Change render bullet count");
         
-        _runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new CurrentBulletsUpdateEvent(BulletCount));   
+        GameLauncher.Instance.EventBus.Publish(new CurrentBulletsUpdateEvent(BulletCount));   
     }
 
     private void OnMaxBulletsUpdatePublish()
     {
-        _runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new MaxBulletsUpdateEvent(MaxBullets));
+        GameLauncher.Instance.EventBus.Publish(new MaxBulletsUpdateEvent(MaxBullets));
     }
 
     private void OnReloadingStatePublish()
     {
-        _runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new ReloadingStateChangedEvent(Reloading));
+        GameLauncher.Instance.EventBus.Publish(new ReloadingStateChangedEvent(Reloading));
     }
 
 }

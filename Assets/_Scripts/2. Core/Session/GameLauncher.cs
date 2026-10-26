@@ -12,6 +12,7 @@ namespace Game.Core
     public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     {
         public IEventBus EventBus { get; private set; }
+        public static GameLauncher Instance { get; private set; }
 
         [SerializeField] private NetworkPlayerState _playerStatePrefab;
         [SerializeField] private LocalInputProvider _localInputProvider;
@@ -25,17 +26,15 @@ namespace Game.Core
         [SerializeField] private int _menuSceneIndex = 0;
         [SerializeField] private int _lobbySceneIndex = 1;
 
-        private static GameLauncher _instance;
-
         private void Awake()
         {
-            if (_instance != null && _instance != this)
+            if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
                 return;
             }
 
-            _instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
             
             EventBus = new EventBus();
