@@ -42,20 +42,20 @@ namespace Game.Meta
         {
             if (Object.HasStateAuthority)
             {
-                Runner.GetComponentInParent<GameLauncher>().EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
+                GameLauncher.Instance.EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
 
                 StartRound();
             }
-            
-            _hudManager.Init(Runner.GetComponentInParent<GameLauncher>().EventBus);
-            _endScreenManager.Init(Runner.GetComponentInParent<GameLauncher>().EventBus);
+                
+            _hudManager.Init(GameLauncher.Instance.EventBus);
+            _endScreenManager.Init(GameLauncher.Instance.EventBus);
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
             if (Object.HasStateAuthority)
             {
-                Runner.GetComponentInParent<GameLauncher>().EventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
+                GameLauncher.Instance.EventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
             }
         }
 
@@ -190,12 +190,12 @@ namespace Game.Meta
 
         private void OnMatchScoreUpdatePublish()
         {
-            Runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new MatchScoreUpdateEvent(ScoreTeam0, ScoreTeam1));
+            GameLauncher.Instance.EventBus.Publish(new MatchScoreUpdateEvent(ScoreTeam0, ScoreTeam1));
         }
 
         private void OnMatchEndedEvent()
         {
-            Runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new MatchEndedEvent(Winner));
+            GameLauncher.Instance.EventBus.Publish(new MatchEndedEvent(Winner));
         }
 
         public void ReturnToLobby()
