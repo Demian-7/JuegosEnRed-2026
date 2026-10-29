@@ -734,8 +734,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Meta.MatchManager
   _spawner: {fileID: 1045212942}
-  _hudManager: {fileID: 0}
-  _endScreenManager: {fileID: 0}
+  _hudManager: {fileID: 5172476930561944419}
+  _endScreenManager: {fileID: 5172476930561944418}
   _lobbySceneIndex: 1
   _Phase: 0
   _CurrentRound: 0
@@ -1533,6 +1533,28 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
+--- !u!114 &5172476930561944418 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 7629055379814046796, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
+  m_PrefabInstance: {fileID: 5172476930561944417}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 67c188bc4f88da140b2ce4f6337da3b6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::EndScreenManager
+--- !u!114 &5172476930561944419 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 501751453498296639, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
+  m_PrefabInstance: {fileID: 5172476930561944417}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42d91f8d35d12934da0fb77e48d496e1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::HUDManager
 --- !u!1001 &7295840257381221688
 PrefabInstance:
   m_ObjectHideFlags: 0
