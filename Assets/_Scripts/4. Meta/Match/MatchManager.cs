@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Fusion;
 using Game.Core;
 using Game.Foundation;
+using Game.Presentation;
 using Game.Simulation;
 using UnityEngine;
 
@@ -18,6 +19,8 @@ namespace Game.Meta
     public class MatchManager : NetworkBehaviour, IPlayerLeft
     {
         [SerializeField] private MatchSpawner _spawner;
+        [SerializeField] private HUDManager _hudManager;
+        [SerializeField] private EndScreenManager _endScreenManager;
         [SerializeField] private int _lobbySceneIndex = 1;
 
         [Networked, OnChangedRender(nameof(OnPhaseChanged))] 
@@ -47,8 +50,12 @@ namespace Game.Meta
             {
                 GameLauncher.Instance.EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
                 
-                Phase = MatchPhase.TeamAssignment; 
+                Phase = MatchPhase.TeamAssignment;
             }
+
+            // Every client (not only the host) needs its HUD listening to match events.
+            _hudManager.Init();
+            _endScreenManager.Init();
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
@@ -135,6 +142,7 @@ namespace Game.Meta
             else if (AliveTeam1 <= 0) EndRound(0);
         }
         
+        // Assignments store TEAM_A (1) / TEAM_B (2); the match uses 0 / 1. Returns -1 if not found.
         private int GetTeamIndex(PlayerRef player)
         {
             if (TeamAssignmentService.Instance == null) return -1;
@@ -144,7 +152,7 @@ namespace Game.Meta
             {
                 var assign = assignments.Get(i);
                 if (assign.Player == player)
-                    return assign.TeamId;
+                    return assign.TeamId == MatchConstants.TEAM_A ? 0 : 1;
             }
             return -1;
         }
