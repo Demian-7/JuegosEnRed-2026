@@ -10,6 +10,7 @@ namespace Game.Simulation
 
         [SerializeField] private float _bulletSpeed = 10f;
         [SerializeField] private float _lifetime = 2f;
+        [SerializeField] private NetworkPrefabRef _hitEffectPrefab;
 
         [Networked] private Vector3 Direction { get; set; }
         [Networked] private TickTimer LifeTimer { get; set; }
@@ -68,8 +69,16 @@ namespace Game.Simulation
             {
                 dmg.DamageableHit();
             }
+            
+            RPC_PlayHitEffect(_hitEffectPrefab, transform.position);
 
             Runner.Despawn(Object);
+        }
+        
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        public void RPC_PlayHitEffect(NetworkPrefabRef prefab, Vector3 spawnPoint, RpcInfo info = default)
+        {
+            var obj = Runner.Spawn(prefab, spawnPoint);
         }
     }
 }

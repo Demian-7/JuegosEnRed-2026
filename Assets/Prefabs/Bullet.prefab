@@ -4967,6 +4967,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::Bullet
   _bulletSpeed: 500
   _lifetime: 10
+  _hitEffectPrefab:
+    RawGuidValue: 32d6eabd3b4a66743acf338c7269d665
 --- !u!50 &1540624510959739053
 Rigidbody2D:
   serializedVersion: 5
