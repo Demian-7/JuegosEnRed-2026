@@ -21,7 +21,6 @@ namespace Game.Simulation
         {
             if (Object.HasStateAuthority)
             {
-                // Object.InputAuthority is who this tank belongs to
                 MovementSource = Object.InputAuthority;
                 Debug.Log($"Movement assigned to: {MovementSource}");
             }
@@ -31,8 +30,6 @@ namespace Game.Simulation
             _ability.Init(Runner);
         }
 
-        // Local-only tint: my tank blue, teammate's green, enemies red
-        // set by MatchSpawner before the tank is replicated, runs on every client.
         private void Colorize()
         {
             Color color = new Color(255, 0, 201);
@@ -46,10 +43,12 @@ namespace Game.Simulation
         {
             if (Object.HasStateAuthority && AbilitySource.IsNone && !MovementSource.IsNone)
             {
-                // Fallback for tanks not spawned by MatchSpawner (which already sets both sources).
-                AbilitySource = _pairing.GetAbilitySourceFor(MovementSource, Runner);
-                if (!AbilitySource.IsNone)
-                    Debug.Log($"Ability assigned to: {AbilitySource}");
+                if (_pairing != null) 
+                {
+                    AbilitySource = _pairing.GetAbilitySourceFor(MovementSource, Runner);
+                    if (!AbilitySource.IsNone)
+                        Debug.Log($"Ability assigned to: {AbilitySource}");
+                }
             }
 
             if (Runner.TryGetInputForPlayer<NetworkInputData>(MovementSource, out var moveInput))
