@@ -20,7 +20,6 @@ namespace Game.Meta
         [SerializeField] private HUDManager _hudManager;
         [SerializeField] private EndScreenManager _endScreenManager;
         [SerializeField] private int _lobbySceneIndex = 1;
-        [SerializeField] private int _totalRounds = 3;
 
         [Networked] public MatchPhase Phase { get; set; }
         [Networked] public int CurrentRound { get; set; }
@@ -37,27 +36,26 @@ namespace Game.Meta
         [Networked] public int AliveTeam1 { get; set; }
         [Networked] private TickTimer Timer { get; set; }
 
+        private int _totalRounds => MatchSettings.Instance != null ? (int)MatchSettings.Instance.Rounds : 3;
+
         public override void Spawned()
         {
             if (Object.HasStateAuthority)
             {
-                Runner.GetComponentInParent<GameLauncher>().EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
-
-                //_hudManager.EventBus = Runner.GetComponentInParent<GameLauncher>().EventBus;
-                
-                
+                GameLauncher.Instance.EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
 
                 StartRound();
             }
-            _hudManager.Init(Runner.GetComponentInParent<GameLauncher>().EventBus);
-            _endScreenManager.Init(Runner.GetComponentInParent<GameLauncher>().EventBus);
+                
+            _hudManager.Init(GameLauncher.Instance.EventBus);
+            _endScreenManager.Init(GameLauncher.Instance.EventBus);
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
             if (Object.HasStateAuthority)
             {
-                Runner.GetComponentInParent<GameLauncher>().EventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
+                GameLauncher.Instance.EventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
             }
         }
 
@@ -173,8 +171,6 @@ namespace Game.Meta
             else if (Phase == MatchPhase.Ended)
             {
                 CalculateWinner();
-                
-
             }
         }
         
@@ -194,12 +190,12 @@ namespace Game.Meta
 
         private void OnMatchScoreUpdatePublish()
         {
-            Runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new MatchScoreUpdateEvent(ScoreTeam0, ScoreTeam1));
+            GameLauncher.Instance.EventBus.Publish(new MatchScoreUpdateEvent(ScoreTeam0, ScoreTeam1));
         }
 
         private void OnMatchEndedEvent()
         {
-            Runner.GetComponentInParent<GameLauncher>().EventBus.Publish(new MatchEndedEvent(Winner));
+            GameLauncher.Instance.EventBus.Publish(new MatchEndedEvent(Winner));
         }
 
         public void ReturnToLobby()

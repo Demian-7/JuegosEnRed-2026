@@ -1,25 +1,24 @@
-﻿using System;
-using System.Linq;
+﻿using System.Linq;
 using Fusion;
+using Game.Core;
 using UnityEngine;
-using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
 namespace Game.Meta
 {
     public class LobbyManager : NetworkBehaviour
     {
-        private const int RequiredPlayers = 4;
+        private const int RequiredPlayers = 2;
 
         [Tooltip("The build index of the gameplay arena scene")] [SerializeField]
         private int _gameplaySceneIndex = 1;
-
-        private Button _startButton;
+        [SerializeField] private Button _startButton;
+        [SerializeField] private NetworkPrefabRef _matchSettingsPrefab;
+        
         private int _countPlayers => Runner.ActivePlayers.Count();
 
         private void Awake()
         {
-            _startButton = GetComponent<Button>();
             _startButton.onClick.AddListener(StartMatch);
         }
 
@@ -29,7 +28,6 @@ namespace Game.Meta
         /// </summary>
         public void StartMatch()
         {
-            // host only
             if (Object == null || !Object.HasStateAuthority)
                 return;
 
@@ -39,11 +37,37 @@ namespace Game.Meta
                 return;
             }
 
-            // close room when starting
-            Runner.SessionInfo.IsOpen = false;
+            if (MatchSettings.Instance.TeamMode == ETeamSelectionMode.Manual && !ValidateManualTeams())
+            {
+                Debug.Log("Can't start: Manual teams are not balanced 2v2.");
+            }
 
+            Runner.SessionInfo.IsOpen = false;
             Runner.LoadScene(SceneRef.FromIndex(_gameplaySceneIndex));
-            Debug.Log("Host is starting the match. Loading arena...");
+        }
+
+        private bool ValidateManualTeams()
+        {
+            int teamA = 0;
+            int teamB = 0;
+
+            foreach (var player in Runner.ActivePlayers)
+            {
+                if (Runner.TryGetPlayerObject(player, out var playerObj))
+                {
+                    var state = playerObj.GetComponent<NetworkPlayerState>();
+                    if (state.TeamId == MatchConstants.TEAM_A)
+                    {
+                        teamA++;
+                    }
+                    else if (state.TeamId == MatchConstants.TEAM_B)
+                    {
+                        teamB++;
+                    }
+                }
+            }
+            
+            return teamA == 2 && teamB == 2;
         }
 
         public override void Spawned()
@@ -51,6 +75,11 @@ namespace Game.Meta
             if (Object.HasStateAuthority)
             {
                 Runner.SessionInfo.IsOpen = true;
+
+                if (MatchSettings.Instance == null)
+                {
+                    Runner.Spawn(_matchSettingsPrefab, flags: NetworkSpawnFlags.DontDestroyOnLoad);
+                }
             }
         }
     }
