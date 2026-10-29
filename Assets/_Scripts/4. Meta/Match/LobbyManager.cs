@@ -9,7 +9,7 @@ namespace Game.Meta
 {
     public class LobbyManager : NetworkBehaviour
     {
-        private const int RequiredPlayers = 4;
+        private const int RequiredPlayers = 2;
 
         [Tooltip("The build index of the gameplay arena scene")] [SerializeField]
         private int _gameplaySceneIndex = 1;

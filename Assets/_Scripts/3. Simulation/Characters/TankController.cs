@@ -38,9 +38,9 @@ namespace Game.Simulation
         // set by MatchSpawner before the tank is replicated, runs on every client.
         private void Colorize()
         {
-            Color color = Color.red;
-            if (MovementSource == Runner.LocalPlayer) color = Color.blue;
-            else if (AbilitySource == Runner.LocalPlayer) color = Color.green;
+            Color color = new Color(255, 0, 201);
+            if (MovementSource == Runner.LocalPlayer) color = Color.green;
+            else if (AbilitySource == Runner.LocalPlayer) color = new Color(0, 225, 255);
 
             GetComponentInChildren<SpriteRenderer>().color = color;
         }
