@@ -88,13 +88,16 @@ namespace Game.Meta
 
             _joinTeamAButton.onClick.AddListener(() => TrySetTeam(MatchConstants.TEAM_A));
             _joinTeamBButton.onClick.AddListener(() => TrySetTeam(MatchConstants.TEAM_B));
-            
-            _runner = FindObjectOfType<NetworkRunner>();
-            _matchSettings = MatchSettings.Instance;
         }
 
         private void Update()
         {
+            // MatchSettings is spawned by LobbyManager after this view starts, so wait for it.
+            _matchSettings = MatchSettings.Instance;
+            if (_matchSettings == null) return;
+
+            if (_runner == null) _runner = FindObjectOfType<NetworkRunner>();
+
             SyncUIWithNetworkState();
         }
 
