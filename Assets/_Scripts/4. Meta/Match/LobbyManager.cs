@@ -1,7 +1,8 @@
-﻿using System.Linq;
-using Fusion;
+﻿using Fusion;
 using Game.Core;
 using Game.Foundation;
+using System.Linq;
+using System.Text;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -44,7 +45,14 @@ namespace Game.Meta
             }
 
             Runner.SessionInfo.IsOpen = false;
-            Runner.LoadScene(SceneRef.FromIndex(_gameplaySceneIndex));
+            var map = MatchSettings.Instance.FixedMapId;
+
+            LoadSelectedLevel(map);
+        }
+
+        private void LoadSelectedLevel(byte mapName)
+        {
+            Runner.LoadScene(SceneRef.FromIndex(mapName +2));
         }
 
         private bool ValidateManualTeams()

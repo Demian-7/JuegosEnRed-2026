@@ -1,22 +1,40 @@
 using Fusion;
 using Game.Core;
 using Game.Foundation;
-using UnityEngine;
+using Game.Presentation;
 
-public class HealthComponent : MonoBehaviour, IDamageable
+namespace Game.Simulation 
 {
-    private NetworkObject _parent;
-    private NetworkRunner _runner;
-
-    public void Init(NetworkObject parent, NetworkRunner runner)
+    public class HealthComponent : NetworkBehaviour, IDamageable
     {
-        _parent = parent;
-        _runner = runner;
-    }
+        [Networked] public NetworkBool IsAlive { get; set; } = true;
 
-    public void DamageableHit()
-    {
-        GameLauncher.Instance.EventBus.Publish(new PlayerDiedEvent(_parent.InputAuthority));
-        _runner.Despawn(_parent);
+        public void DamageableHit()
+        {
+            if (!Object.HasStateAuthority || !IsAlive) 
+                return;
+
+            IsAlive = false;
+
+            PlayerRef victim = Object.InputAuthority; 
+            if (TryGetComponent<TankController>(out var character))
+            {
+                victim = character.MovementSource;
+            }
+
+            GameLauncher.Instance.EventBus.Publish(new PlayerDiedEvent(victim));
+
+            Rpc_TriggerDeathPresentation();
+        }
+
+        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
+        private void Rpc_TriggerDeathPresentation()
+        {
+            CameraShake.AddTrauma(1f); 
+            
+            gameObject.SetActive(false);
+            
+            // should also trigger death VFX/SFX here.
+        }
     }
 }
