@@ -61,6 +61,7 @@ MonoBehaviour:
   - {fileID: 5747639558527795611}
   - {fileID: 4359779392069644949}
   - {fileID: 1691892148011108053}
+  - {fileID: 8942953215965413965}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &938001107232714999
 MonoBehaviour:
@@ -219,6 +220,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 696c4c13edd7dd44f82a59f8c29be44f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
+  _IsAlive:
+    _value: 1
 --- !u!1 &9080973091871501905
 GameObject:
   m_ObjectHideFlags: 0

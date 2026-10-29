@@ -25,8 +25,6 @@ namespace Game.Simulation
                 // Object.InputAuthority is who this tank belongs to
                 MovementSource = Object.InputAuthority;
                 Debug.Log($"Movement assigned to: {MovementSource}");
-                GetComponent<HealthComponent>().Init(Object, Runner);
-
             }
 
             Colorize();
