@@ -49,6 +49,14 @@ namespace Game.Meta
                 
             _hudManager.Init(GameLauncher.Instance.EventBus);
             _endScreenManager.Init(GameLauncher.Instance.EventBus);
+
+            // During the match each player only talks to their teammate.
+            int localTeam = GetTeamIndex(Runner.LocalPlayer);
+            if (localTeam >= 0)
+            {
+                byte voiceGroup = localTeam == 0 ? MatchConstants.TEAM_A : MatchConstants.TEAM_B;
+                GameLauncher.Instance.EventBus.Publish(new VoiceChannelChangedEvent(voiceGroup));
+            }
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
@@ -86,21 +94,13 @@ namespace Game.Meta
         {
             if (Phase != MatchPhase.Playing)
                 return;
-            
-            //"Emulate" StubTeammatePairing logic to find this player's team.
-            //When real TeamAssignmentService si built, use it instead.
-            var sorted = new List<PlayerRef>(Runner.ActivePlayers);
-            sorted.Sort((a, b) => a.PlayerId.CompareTo(b.PlayerId));
 
-            int index = sorted.IndexOf(evt.DeadPlayer);
-            if (index < 0)
+            int teamId = GetTeamIndex(evt.DeadPlayer);
+            if (teamId < 0)
             {
                 Debug.LogError("Dead player's index is < 0??");
                 return;
             }
-
-            //Players 0 & 1 are Team 0, players 2 & 3 are Team 1.
-            int teamId = (index < 2) ? 0 : 1;
 
             if (teamId == 0)
             {
@@ -123,6 +123,21 @@ namespace Game.Meta
             }
         }
         
+        //"Emulate" StubTeammatePairing logic to find a player's team (0 or 1), -1 if not found.
+        //When real TeamAssignmentService si built, use it instead.
+        private int GetTeamIndex(PlayerRef player)
+        {
+            var sorted = new List<PlayerRef>(Runner.ActivePlayers);
+            sorted.Sort((a, b) => a.PlayerId.CompareTo(b.PlayerId));
+
+            int index = sorted.IndexOf(player);
+            if (index < 0)
+                return -1;
+
+            //Players 0 & 1 are Team 0, players 2 & 3 are Team 1.
+            return (index < 2) ? 0 : 1;
+        }
+
         // Call this on the host when a team is fully dead.
         public void EndRound(int winnerTeam)
         {

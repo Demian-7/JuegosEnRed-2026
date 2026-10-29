@@ -1,6 +1,7 @@
 ﻿using System.Linq;
 using Fusion;
 using Game.Core;
+using Game.Foundation;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -81,6 +82,9 @@ namespace Game.Meta
                     Runner.Spawn(_matchSettingsPrefab, flags: NetworkSpawnFlags.DontDestroyOnLoad);
                 }
             }
+
+            // Everyone in the room talks to each other while in the lobby.
+            GameLauncher.Instance.EventBus.Publish(new VoiceChannelChangedEvent(VoiceChannelService.EVERYONE_GROUP));
         }
     }
 }
