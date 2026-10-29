@@ -104,3 +104,11 @@ InitTestScene*.unity*
 
 # Auto-generated cache in Assets folder
 /[Aa]ssets/[Ss]ceneDependencyCache*
+
+# Local builds and per-machine build profiles
+/buildci/
+/[Aa]ssets/[Ss]ettings/Build Profiles/
+/[Aa]ssets/[Ss]ettings/Build Profiles.meta
+
+# macOS
+.DS_Store
