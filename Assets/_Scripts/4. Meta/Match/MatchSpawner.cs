@@ -12,8 +12,7 @@ namespace Game.Meta
 
         private readonly List<NetworkObject> _tanks = new List<NetworkObject>();
 
-        // TEMPORARY: swap for the real TeamAssignmentService once it exists.
-        private readonly ITeammatePairing _pairing = new StubTeammatePairing();
+        private ITeammatePairing _pairing => TeamAssignmentService.Instance;
 
         // Called by MatchManager at the start of every round.
         public void SpawnAll()

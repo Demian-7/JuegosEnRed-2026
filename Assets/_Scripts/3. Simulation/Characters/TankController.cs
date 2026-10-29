@@ -15,8 +15,7 @@ namespace Game.Simulation
         [SerializeField] private AbilityController _ability;
         [SerializeField] private NetworkPrefabRef _bulletPrefab;
 
-        // TEMPORARY: swap for the real TeamAssignmentService once it exists (Game.Meta).
-        private ITeammatePairing _pairing = new StubTeammatePairing();
+        private ITeammatePairing _pairing => TeamAssignmentService.Instance;
 
         public override void Spawned()
         {
