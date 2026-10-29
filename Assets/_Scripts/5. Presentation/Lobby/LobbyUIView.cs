@@ -112,7 +112,7 @@ namespace Game.Meta
             _teamModeSelector.SyncVisuals((int)_matchSettings.TeamMode, isHost);
             _mapModeSelector.SyncVisuals((int)_matchSettings.MapMode, isHost);
             _mapIndexSelector.SyncVisuals((int)_matchSettings.FixedMapId, isHost);
-            Debug.Log(_matchSettings.FixedMapId);
+
             int roundsIndex = _matchSettings.Rounds == EBestOfRounds.Bo3 ? 0 : 
                               _matchSettings.Rounds == EBestOfRounds.Bo5 ? 1 : 2;
             _roundsSelector.SyncVisuals(roundsIndex, isHost);
