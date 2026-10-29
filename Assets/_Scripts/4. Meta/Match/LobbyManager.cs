@@ -43,8 +43,19 @@ namespace Game.Meta
                 Debug.Log("Can't start: Manual teams are not balanced 2v2.");
             }
 
-            Runner.SessionInfo.IsOpen = false;
-            var map = MatchSettings.Instance.FixedMapId;
+
+            byte map = 0;
+            if (MatchSettings.Instance.MapMode == EMapSelectionMode.Carousel)
+            {
+
+            }
+            else if (MatchSettings.Instance.MapMode == EMapSelectionMode.Fixed)
+            {
+                map = MatchSettings.Instance.FixedMapId;
+            }
+
+                Runner.SessionInfo.IsOpen = false;
+             
 
             LoadSelectedLevel(map);
         }

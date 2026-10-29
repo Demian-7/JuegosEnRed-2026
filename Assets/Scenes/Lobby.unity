@@ -879,6 +879,7 @@ MonoBehaviour:
     Options:
     - 'Map: 1'
     - 'Map: 2'
+    - 'Map: 3'
   _modifiersToggle: {fileID: 112296471}
   _powerUpsToggle: {fileID: 1196964947}
   _teamSelectionPanel: {fileID: 643785775}
