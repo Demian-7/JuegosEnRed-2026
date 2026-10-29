@@ -1,4 +1,4 @@
-using System;
+using Game.Core;
 using Game.Foundation;
 using TMPro;
 using UnityEngine;
@@ -14,9 +14,10 @@ public class EndScreenManager : MonoBehaviour
 
     private IEventBus _eventBus;
 
-    public void Init(IEventBus eventBus)
+    public void Init()
     {
-        _eventBus = eventBus;
+        _eventBus = GameLauncher.Instance.EventBus;
+        
         _eventBus.Subscribe<MatchEndedEvent>(OnTeamWin);
         DeactivateElements();
     }

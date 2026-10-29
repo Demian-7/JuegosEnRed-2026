@@ -1,69 +1,57 @@
+using Game.Core;
 using Game.Foundation;
 using TMPro;
 using UnityEngine;
 
-public class HUDManager : MonoBehaviour
+namespace Game.Presentation
 {
-    private IEventBus _eventBus;
-    [SerializeField] private TMP_Text _actualBullets;
-    [SerializeField] private TMP_Text _reloadingState;
-    [SerializeField] private TMP_Text _dashState;
-    [SerializeField] private TMP_Text _matchState;
-
-
-    public void Init(IEventBus eventBus)
+    public class HUDManager : MonoBehaviour
     {
-        _eventBus = eventBus;
-        Debug.Log(_eventBus);
-        _eventBus.Subscribe<MatchScoreUpdateEvent>(OnMatchStateUpdate);
-        _eventBus.Subscribe<CurrentBulletsUpdateEvent>(OnBulletsUpdate);
-        _eventBus.Subscribe<ReloadingStateChangedEvent>(OnUpdateReloadingState);
-        _eventBus.Subscribe<DashStateChangedEvent>(OnDashStateChanged);
-        Debug.Log("Hud Manager start");
-    }
-    public void OnBulletsUpdate(CurrentBulletsUpdateEvent evt)
-    {
-        Debug.Log("OnBulletsUpdate");
-        _actualBullets.text = $"{evt.currentBullets} / 1";
-    }
+        [SerializeField] private TMP_Text _actualBullets;
+        [SerializeField] private TMP_Text _reloadingState;
+        [SerializeField] private TMP_Text _dashState;
+        [SerializeField] private TMP_Text _matchState;
 
-    public void OnUpdateReloadingState(ReloadingStateChangedEvent evt) 
-    {
-        if (evt.reloading) 
+        private IEventBus _eventBus;
+
+        public void Init()
         {
-            _reloadingState.text = "Reloading";
-        }
-        else
-        {
-            _reloadingState.text = "";
-
+            _eventBus = GameLauncher.Instance.EventBus;
+            
+            _eventBus.Subscribe<MatchScoreUpdateEvent>(OnMatchStateUpdate);
+            _eventBus.Subscribe<CurrentBulletsUpdateEvent>(OnBulletsUpdate);
+            _eventBus.Subscribe<ReloadingStateChangedEvent>(OnUpdateReloadingState);
+            _eventBus.Subscribe<DashStateChangedEvent>(OnDashStateChanged);
         }
 
-    }
-
-
-    public void OnDashStateChanged(DashStateChangedEvent evt) 
-    {
-        if (evt.canDash)
+        private void OnBulletsUpdate(CurrentBulletsUpdateEvent evt)
         {
-            _dashState.text = "Ready";
+            _actualBullets.text = $"{evt.currentBullets} / 1"; 
         }
-        else
+
+        private void OnUpdateReloadingState(ReloadingStateChangedEvent evt) 
         {
-            _dashState.text = "Cooldown";
-
+            _reloadingState.text = evt.reloading ? "Reloading" : "";
         }
-    }
-    public void OnMatchStateUpdate(MatchScoreUpdateEvent evt) 
-    {
-        _matchState.text = $"{evt.team0Rounds} - {evt.team1Rounds}";
-    }
 
-    private void OnDisable()
-    {
-        _eventBus?.Unsubscribe<MatchScoreUpdateEvent>(OnMatchStateUpdate);
-        _eventBus?.Unsubscribe<CurrentBulletsUpdateEvent>(OnBulletsUpdate);
-        _eventBus?.Unsubscribe<ReloadingStateChangedEvent>(OnUpdateReloadingState);
-        _eventBus?.Unsubscribe<DashStateChangedEvent>(OnDashStateChanged);
+        private void OnDashStateChanged(DashStateChangedEvent evt) 
+        {
+            _dashState.text = evt.canDash ? "Ready" : "Cooldown";
+        }
+
+        private void OnMatchStateUpdate(MatchScoreUpdateEvent evt) 
+        {
+            _matchState.text = $"{evt.team0Rounds} - {evt.team1Rounds}";
+        }
+
+        private void OnDestroy()
+        {
+            if (_eventBus == null) return;
+            
+            _eventBus.Unsubscribe<MatchScoreUpdateEvent>(OnMatchStateUpdate);
+            _eventBus.Unsubscribe<CurrentBulletsUpdateEvent>(OnBulletsUpdate);
+            _eventBus.Unsubscribe<ReloadingStateChangedEvent>(OnUpdateReloadingState);
+            _eventBus.Unsubscribe<DashStateChangedEvent>(OnDashStateChanged);
+        }
     }
 }

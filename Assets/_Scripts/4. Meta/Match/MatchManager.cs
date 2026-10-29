@@ -9,6 +9,7 @@ namespace Game.Meta
 {
     public enum MatchPhase
     {
+        TeamAssignment, // Added to pause execution until assignments exist
         Playing,
         RoundEnded,
         Ended
@@ -17,45 +18,36 @@ namespace Game.Meta
     public class MatchManager : NetworkBehaviour, IPlayerLeft
     {
         [SerializeField] private MatchSpawner _spawner;
-        [SerializeField] private HUDManager _hudManager;
-        [SerializeField] private EndScreenManager _endScreenManager;
         [SerializeField] private int _lobbySceneIndex = 1;
 
-        [Networked] public MatchPhase Phase { get; set; }
+        [Networked, OnChangedRender(nameof(OnPhaseChanged))] 
+        public MatchPhase Phase { get; set; }
+        
         [Networked] public int CurrentRound { get; set; }
+        [Networked] public int AliveTeam0 { get; set; }
+        [Networked] public int AliveTeam1 { get; set; }
 
-        [Networked, OnChangedRender(nameof (OnMatchScoreUpdatePublish))] 
+        [Networked, OnChangedRender(nameof(OnMatchScoreUpdatePublish))] 
         public int ScoreTeam0 { get; set; }
 
         [Networked, OnChangedRender(nameof(OnMatchScoreUpdatePublish))] 
         public int ScoreTeam1 { get; set; }
 
-        [Networked, OnChangedRender(nameof (OnMatchEndedEvent))]
-        public int Winner { get; set; }
-        [Networked] public int AliveTeam0 { get; set; }
-        [Networked] public int AliveTeam1 { get; set; }
+        [Networked, OnChangedRender(nameof(OnMatchEndedEvent))]
+        public int Winner { get; set; } = -1; 
+        
         [Networked] private TickTimer Timer { get; set; }
 
         private int _totalRounds => MatchSettings.Instance != null ? (int)MatchSettings.Instance.Rounds : 3;
+        private int _winThreshold => (_totalRounds / 2) + 1;
 
         public override void Spawned()
         {
             if (Object.HasStateAuthority)
             {
                 GameLauncher.Instance.EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
-
-                StartRound();
-            }
                 
-            _hudManager.Init(GameLauncher.Instance.EventBus);
-            _endScreenManager.Init(GameLauncher.Instance.EventBus);
-
-            // During the match each player only talks to their teammate.
-            int localTeam = GetTeamIndex(Runner.LocalPlayer);
-            if (localTeam >= 0)
-            {
-                byte voiceGroup = localTeam == 0 ? MatchConstants.TEAM_A : MatchConstants.TEAM_B;
-                GameLauncher.Instance.EventBus.Publish(new VoiceChannelChangedEvent(voiceGroup));
+                Phase = MatchPhase.TeamAssignment; 
             }
         }
 
@@ -76,10 +68,41 @@ namespace Game.Meta
                 EndMatch();
         }
 
+        public override void FixedUpdateNetwork()
+        {
+            if (!Object.HasStateAuthority)
+                return;
+
+            if (Phase == MatchPhase.TeamAssignment)
+            {
+                if (TeamAssignmentService.Instance == null) return;
+
+                TeamAssignmentService.Instance.GeneratePairings();
+                StartRound();
+                return;
+            }
+
+            if (!Timer.Expired(Runner))
+                return;
+            
+            Timer = TickTimer.None;
+
+            if (Phase == MatchPhase.RoundEnded)
+            {
+                if (ScoreTeam0 >= _winThreshold || ScoreTeam1 >= _winThreshold) 
+                    EndMatch();
+                else 
+                    StartRound();
+            }
+            else if (Phase == MatchPhase.Ended)
+            {
+                ReturnToLobby();
+            }
+        }
+
         private void StartRound()
         {
             CurrentRound++;
-            Phase = MatchPhase.Playing;
             _spawner.DespawnAll();
             ClearRemainingBullets();
             _spawner.SpawnAll();
@@ -87,6 +110,7 @@ namespace Game.Meta
             AliveTeam0 = 2;
             AliveTeam1 = 2;
             
+            Phase = MatchPhase.Playing;
             Debug.Log($"[Match] Round {CurrentRound} started");
         }
 
@@ -98,47 +122,33 @@ namespace Game.Meta
             int teamId = GetTeamIndex(evt.DeadPlayer);
             if (teamId < 0)
             {
-                Debug.LogError("Dead player's index is < 0??");
+                Debug.LogError($"Could not find team for dead player: {evt.DeadPlayer}");
                 return;
             }
 
-            if (teamId == 0)
-            {
-                AliveTeam0--;
-            }
-            else
-            {
-                AliveTeam1--;
-            }
+            if (teamId == 0) AliveTeam0--;
+            else AliveTeam1--;
             
             Debug.Log($"Player {evt.DeadPlayer} died. Team 0 Alive: {AliveTeam0}, Team 1 Alive: {AliveTeam1}");
 
-            if (AliveTeam0 <= 0)
-            {
-                EndRound(1);
-            }
-            else if (AliveTeam1 <= 0)
-            {
-                EndRound(0);
-            }
+            if (AliveTeam0 <= 0) EndRound(1);
+            else if (AliveTeam1 <= 0) EndRound(0);
         }
         
-        //"Emulate" StubTeammatePairing logic to find a player's team (0 or 1), -1 if not found.
-        //When real TeamAssignmentService si built, use it instead.
         private int GetTeamIndex(PlayerRef player)
         {
-            var sorted = new List<PlayerRef>(Runner.ActivePlayers);
-            sorted.Sort((a, b) => a.PlayerId.CompareTo(b.PlayerId));
+            if (TeamAssignmentService.Instance == null) return -1;
 
-            int index = sorted.IndexOf(player);
-            if (index < 0)
-                return -1;
-
-            //Players 0 & 1 are Team 0, players 2 & 3 are Team 1.
-            return (index < 2) ? 0 : 1;
+            var assignments = TeamAssignmentService.Instance.Assignments;
+            for (int i = 0; i < assignments.Length; i++)
+            {
+                var assign = assignments.Get(i);
+                if (assign.Player == player)
+                    return assign.TeamId;
+            }
+            return -1;
         }
 
-        // Call this on the host when a team is fully dead.
         public void EndRound(int winnerTeam)
         {
             if (Phase != MatchPhase.Playing) 
@@ -148,7 +158,6 @@ namespace Game.Meta
             else ScoreTeam1++;
 
             Debug.Log($"[Match] Round {CurrentRound} won by team {winnerTeam}. Score {ScoreTeam0} - {ScoreTeam1}");
-            
 
             Phase = MatchPhase.RoundEnded;
             Timer = TickTimer.CreateFromSeconds(Runner, 2f);
@@ -161,8 +170,11 @@ namespace Game.Meta
 
             _spawner.DespawnAll();
             Debug.Log($"[Match] Match ended. Score {ScoreTeam0} - {ScoreTeam1}");
+            
+            Winner = ScoreTeam0 > ScoreTeam1 ? 0 : 1;
             Phase = MatchPhase.Ended;
-            Timer = TickTimer.CreateFromSeconds(Runner, 3f);
+            
+            Timer = TickTimer.CreateFromSeconds(Runner, 4f); 
         }
 
         public void PlayerLeft(PlayerRef player)
@@ -170,35 +182,28 @@ namespace Game.Meta
             if (Object.HasStateAuthority)
                 EndMatch();
         }
-
-        public override void FixedUpdateNetwork()
-        {
-            if (!Object.HasStateAuthority || !Timer.Expired(Runner))
-                return;
-            
-            Timer = TickTimer.None;
-
-            if (Phase == MatchPhase.RoundEnded)
-            {
-                if (CurrentRound >= _totalRounds) EndMatch();
-                else StartRound();
-            }
-            else if (Phase == MatchPhase.Ended)
-            {
-                CalculateWinner();
-            }
-        }
         
         private void ClearRemainingBullets()
         {
-            // Create a temporary list to safely iterate while the HashSet modifies itself
             var bulletsToDespawn = new List<Bullet>(Bullet.ActiveBullets);
-            
             foreach (var bullet in bulletsToDespawn)
             {
                 if (bullet.Object != null && bullet.Object.IsValid)
                 {
                     Runner.Despawn(bullet.Object);
+                }
+            }
+        }
+
+        private void OnPhaseChanged()
+        {
+            if (Phase == MatchPhase.Playing && CurrentRound == 1)
+            {
+                int localTeam = GetTeamIndex(Runner.LocalPlayer);
+                if (localTeam >= 0)
+                {
+                    byte voiceGroup = localTeam == 0 ? MatchConstants.TEAM_A : MatchConstants.TEAM_B;
+                    GameLauncher.Instance.EventBus.Publish(new VoiceChannelChangedEvent(voiceGroup));
                 }
             }
         }
@@ -210,24 +215,13 @@ namespace Game.Meta
 
         private void OnMatchEndedEvent()
         {
-            GameLauncher.Instance.EventBus.Publish(new MatchEndedEvent(Winner));
+            if (Winner != -1)
+                GameLauncher.Instance.EventBus.Publish(new MatchEndedEvent(Winner));
         }
 
         public void ReturnToLobby()
         {
             Runner.LoadScene(SceneRef.FromIndex(_lobbySceneIndex));
-        }
-
-        private void CalculateWinner()
-        {
-            if (ScoreTeam0 > ScoreTeam1)
-            {
-                Winner = 1;
-            }
-            else
-            {
-                Winner = 2;
-            }
         }
     }
 }
