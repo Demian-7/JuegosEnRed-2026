@@ -54,6 +54,7 @@ namespace Game.Meta
         [SerializeField] private UISelector _teamModeSelector;
         [SerializeField] private UISelector _mapModeSelector;
         [SerializeField] private UISelector _roundsSelector;
+        [SerializeField] private UISelector _mapIndexSelector;
 
         [Header("Settings Toggles")]
         [SerializeField] private Toggle _modifiersToggle;
@@ -73,6 +74,7 @@ namespace Game.Meta
         {
             _teamModeSelector.Initialize(index => { if (IsHost()) _matchSettings.TeamMode = (ETeamSelectionMode)index; });
             _mapModeSelector.Initialize(index => { if (IsHost()) _matchSettings.MapMode = (EMapSelectionMode)index; });
+            _mapIndexSelector.Initialize(index => { if (IsHost()) _matchSettings.FixedMapId = (Byte)index;  });
             
             _roundsSelector.Initialize(index => {
                 if (IsHost())
@@ -88,7 +90,7 @@ namespace Game.Meta
 
             _joinTeamAButton.onClick.AddListener(() => TrySetTeam(MatchConstants.TEAM_A));
             _joinTeamBButton.onClick.AddListener(() => TrySetTeam(MatchConstants.TEAM_B));
-            
+
             _runner = FindObjectOfType<NetworkRunner>();
             _matchSettings = MatchSettings.Instance;
         }
@@ -100,11 +102,17 @@ namespace Game.Meta
 
         private void SyncUIWithNetworkState()
         {
+            _matchSettings ??= MatchSettings.Instance;
+
+            if (_matchSettings == null)
+                return;
+
             bool isHost = IsHost();
 
             _teamModeSelector.SyncVisuals((int)_matchSettings.TeamMode, isHost);
             _mapModeSelector.SyncVisuals((int)_matchSettings.MapMode, isHost);
-            
+            _mapIndexSelector.SyncVisuals((int)_matchSettings.FixedMapId, isHost);
+            Debug.Log(_matchSettings.FixedMapId);
             int roundsIndex = _matchSettings.Rounds == EBestOfRounds.Bo3 ? 0 : 
                               _matchSettings.Rounds == EBestOfRounds.Bo5 ? 1 : 2;
             _roundsSelector.SyncVisuals(roundsIndex, isHost);

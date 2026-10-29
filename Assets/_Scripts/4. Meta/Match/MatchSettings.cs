@@ -9,15 +9,15 @@ namespace Game.Meta
     {
         public static MatchSettings Instance { get; private set; }
         
-        [Networked] public ETeamSelectionMode TeamMode { get; set; }
-        [Networked] public EMapSelectionMode MapMode { get; set; }
+        [Networked] public ETeamSelectionMode TeamMode { get; set; } = ETeamSelectionMode.Manual;
+        [Networked] public EMapSelectionMode MapMode { get; set; } = EMapSelectionMode.Fixed;
         [Networked] public EBestOfRounds Rounds { get; set; } = EBestOfRounds.Bo3;
         
         [Networked] public NetworkBool ModifiersEnabled { get; set; }
         [Networked] public NetworkBool PowerUpsEnabled { get; set; }
         
         //Stores the single map if MapMode == Fixed
-        [Networked] public byte FixedMapId { get; set; } = MatchConstants.RANDOM_MAP_ID;
+        [Networked] public byte FixedMapId { get; set; } = 0;
         
         //Stores the ordered sequence if MapMode == Carousel. Capacity is 7 (Max possible rounds).
         [Networked, Capacity(7)] public NetworkArray<byte> CaruoselMaps { get; }

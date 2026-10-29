@@ -71,5 +71,5 @@ MonoBehaviour:
     _value: 0
   _PowerUpsEnabled:
     _value: 0
-  _FixedMapId: 255
+  _FixedMapId: 0
   _CaruoselMaps: 
