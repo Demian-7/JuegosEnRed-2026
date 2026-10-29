@@ -20,7 +20,6 @@ namespace Game.Meta
         [SerializeField] private HUDManager _hudManager;
         [SerializeField] private EndScreenManager _endScreenManager;
         [SerializeField] private int _lobbySceneIndex = 1;
-        [SerializeField] private int _totalRounds = 3;
 
         [Networked] public MatchPhase Phase { get; set; }
         [Networked] public int CurrentRound { get; set; }
@@ -37,18 +36,17 @@ namespace Game.Meta
         [Networked] public int AliveTeam1 { get; set; }
         [Networked] private TickTimer Timer { get; set; }
 
+        private int _totalRounds => MatchSettings.Instance != null ? (int)MatchSettings.Instance.Rounds : 3;
+
         public override void Spawned()
         {
             if (Object.HasStateAuthority)
             {
                 GameLauncher.Instance.EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
 
-                //_hudManager.EventBus = GameLauncher.Instance.EventBus;
-                
-                
-
                 StartRound();
             }
+                
             _hudManager.Init(GameLauncher.Instance.EventBus);
             _endScreenManager.Init(GameLauncher.Instance.EventBus);
         }
@@ -173,8 +171,6 @@ namespace Game.Meta
             else if (Phase == MatchPhase.Ended)
             {
                 CalculateWinner();
-                
-
             }
         }
         
