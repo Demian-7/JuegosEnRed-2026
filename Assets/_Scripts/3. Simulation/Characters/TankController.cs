@@ -22,7 +22,6 @@ namespace Game.Simulation
             if (Object.HasStateAuthority)
             {
                 MovementSource = Object.InputAuthority;
-                Debug.Log($"Movement assigned to: {MovementSource}");
             }
 
             Colorize();
@@ -46,8 +45,6 @@ namespace Game.Simulation
                 if (_pairing != null) 
                 {
                     AbilitySource = _pairing.GetAbilitySourceFor(MovementSource, Runner);
-                    if (!AbilitySource.IsNone)
-                        Debug.Log($"Ability assigned to: {AbilitySource}");
                 }
             }
 

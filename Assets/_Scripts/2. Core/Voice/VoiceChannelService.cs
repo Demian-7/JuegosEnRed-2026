@@ -64,8 +64,6 @@ namespace Game.Core
             // Leave every group (byte[0]), then join ours. Group 0 needs no join.
             byte[] groupsToAdd = _currentGroup == EVERYONE_GROUP ? null : new[] { _currentGroup };
             _voiceClient.Client.OpChangeGroups(new byte[0], groupsToAdd);
-
-            Debug.Log($"[Voice] Channel set to group {_currentGroup}");
         }
     }
 }

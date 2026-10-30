@@ -739,11 +739,11 @@ MonoBehaviour:
   _lobbySceneIndex: 1
   _Phase: 0
   _CurrentRound: 0
+  _AliveTeam0: 0
+  _AliveTeam1: 0
   _ScoreTeam0: 0
   _ScoreTeam1: 0
   _Winner: 0
-  _AliveTeam0: 0
-  _AliveTeam1: 0
 --- !u!1 &1109648354
 GameObject:
   m_ObjectHideFlags: 0
@@ -1496,6 +1496,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2651223930049308205, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888344735406010266, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6099982560534529582, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
       propertyPath: m_Name
       value: HUD
@@ -1592,6 +1600,14 @@ PrefabInstance:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1045212944}
+    - target: {fileID: 8896956175576651649, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8976738001774455524, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

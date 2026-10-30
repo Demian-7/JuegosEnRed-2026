@@ -33,15 +33,9 @@ public class AbilityController : NetworkBehaviour
 
     public void TryShoot(Vector2 aimWorldPosition)
     {
-        //Intentar resolver disparo si las condiciones se cumplen: - Municion disponible - Interrupciones
-
         if (!(BulletCount > 0))
             return;
 
-
-
-
-        //Llamar al disparo
         Shoot(aimWorldPosition);
     }
 
@@ -71,19 +65,13 @@ public class AbilityController : NetworkBehaviour
         }
     }
 
-
-
     private void LocalShoot()
     {
-        Debug.Log("Local shoot");
         BulletCount--;
-
-
 
         if (BulletCount == 0)
         {
             Reloading = true;
-            
         }
     }
 
@@ -103,13 +91,9 @@ public class AbilityController : NetworkBehaviour
         NetworkObject bullet = Runner.Spawn(_bulletPrefab, spawnPosition, Quaternion.identity);
         bullet.GetComponent<Bullet>().Init(direction);
     }
-
-
     
     private void OnCurrentBulletsUpdatePublish()
     {
-        Debug.Log("Change render bullet count");
-        
         GameLauncher.Instance.EventBus.Publish(new CurrentBulletsUpdateEvent(BulletCount));   
     }
 
@@ -122,5 +106,4 @@ public class AbilityController : NetworkBehaviour
     {
         GameLauncher.Instance.EventBus.Publish(new ReloadingStateChangedEvent(Reloading));
     }
-
 }

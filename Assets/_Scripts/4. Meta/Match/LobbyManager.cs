@@ -35,27 +35,30 @@ namespace Game.Meta
 
             if (_countPlayers < RequiredPlayers)
             {
+                //TODO: Show in UI.
                 Debug.Log($"Can't start: {_countPlayers}/{RequiredPlayers} players.");
                 return;
             }
 
             if (MatchSettings.Instance.TeamMode == ETeamSelectionMode.Manual && !ValidateManualTeams())
             {
+                //TODO: Show in UI.
                 Debug.Log("Can't start: Manual teams are not balanced 2v2.");
+                return;
             }
 
 
             byte map = 0;
             if (MatchSettings.Instance.MapMode == EMapSelectionMode.Carousel)
             {
-
+                //TODO: Code carousel implementation.
             }
             else if (MatchSettings.Instance.MapMode == EMapSelectionMode.Fixed)
             {
                 map = MatchSettings.Instance.FixedMapId;
             }
 
-                Runner.SessionInfo.IsOpen = false;
+            Runner.SessionInfo.IsOpen = false;
              
 
             LoadSelectedLevel(map);

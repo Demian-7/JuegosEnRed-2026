@@ -79,10 +79,10 @@ namespace Game.Core
                 ObjectProvider = _objectPool
             });
 
-            if (result.Ok)
-                Debug.Log($"Hosted room: {roomCode}. Waiting for players...");
-            else
-                Debug.LogError($"Failed to Start Host: {result.ShutdownReason}");
+            //if (result.Ok)
+            //    Debug.Log($"Hosted room: {roomCode}. Waiting for players...");
+            //else
+            //    Debug.LogError($"Failed to Start Host: {result.ShutdownReason}");
 
             return result;
         }
@@ -99,10 +99,10 @@ namespace Game.Core
                 ObjectProvider = _objectPool
             });
 
-            if (result.Ok)
-                Debug.Log($"Joined room: {roomCode}");
-            else
-                Debug.LogError($"Failed to Join: {result.ShutdownReason}");
+            //if (result.Ok)
+            //    Debug.Log($"Joined room: {roomCode}");
+            //else
+            //    Debug.LogError($"Failed to Join: {result.ShutdownReason}");
 
             return result;
         }
@@ -127,8 +127,8 @@ namespace Game.Core
 
             if (runner.TryGetPlayerObject(player, out var playerObj))
             {
+                //Player left. Update roster.
                 runner.Despawn(playerObj);
-                Debug.Log($"Player {player} left. Roster updated.");
             }
         }
 

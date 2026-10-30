@@ -5,7 +5,6 @@ using UnityEngine;
 
 namespace Game.Simulation
 {
-    //[RequireComponent(typeof(Rigidbody))]
     public class CharacterMovement : NetworkBehaviour
     {
         [SerializeField] private float _moveSpeed = 5f;
@@ -31,29 +30,21 @@ namespace Game.Simulation
         }
         public void Simulate(Vector2 moveInput)
         {
-            //if (!Object.HasInputAuthority)
-            //    return;
-
             _lastMoveInput = moveInput;
-            //Debug.Log(moveInput);
             _rb.linearVelocity = moveInput * _moveSpeed * Runner.DeltaTime;
-            //transform.position += (Vector3)moveInput * _moveSpeed * Runner.DeltaTime;
         }
 
         public void DashAction()
         {
-            Debug.Log("Dash Action");
             _rb.AddForce(_lastMoveInput * _dashForce, ForceMode2D.Impulse);
             CanDash = false;
         }
 
         public void TryDash()
         {
-            // Si no puede dashear -> return
-            if (!(CanDash))
+            if (!CanDash)
                 return;
 
-            //Si puede dashear -> llamar a la accion
             DashAction();
         }
 
@@ -74,7 +65,6 @@ namespace Game.Simulation
         {
             CanDash = true;
             _dashTimer = 0;
-            
         }
 
         private void OnDashStateChanged()

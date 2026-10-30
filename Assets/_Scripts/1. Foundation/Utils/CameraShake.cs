@@ -33,7 +33,6 @@ namespace Game.Presentation
             if (Instance == null) 
                 return;
             
-            Debug.Log(amount);
             Instance._trauma = Mathf.Clamp01(Instance._trauma + amount);
         }
 

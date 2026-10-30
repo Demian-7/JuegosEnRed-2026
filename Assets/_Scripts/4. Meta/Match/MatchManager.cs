@@ -10,7 +10,7 @@ namespace Game.Meta
 {
     public enum MatchPhase
     {
-        TeamAssignment, // Added to pause execution until assignments exist
+        TeamAssignment,
         Playing,
         RoundEnded,
         Ended
@@ -53,7 +53,6 @@ namespace Game.Meta
                 Phase = MatchPhase.TeamAssignment;
             }
 
-            // Every client (not only the host) needs its HUD listening to match events.
             _hudManager.Init();
             _endScreenManager.Init();
         }
@@ -118,7 +117,6 @@ namespace Game.Meta
             AliveTeam1 = 2;
             
             Phase = MatchPhase.Playing;
-            Debug.Log($"[Match] Round {CurrentRound} started");
         }
 
         private void OnPlayerDied(PlayerDiedEvent evt)
@@ -136,7 +134,7 @@ namespace Game.Meta
             if (teamId == 0) AliveTeam0--;
             else AliveTeam1--;
             
-            Debug.Log($"Player {evt.DeadPlayer} died. Team 0 Alive: {AliveTeam0}, Team 1 Alive: {AliveTeam1}");
+            //Debug.Log($"Player {evt.DeadPlayer} died. Team 0 Alive: {AliveTeam0}, Team 1 Alive: {AliveTeam1}");
 
             if (AliveTeam0 <= 0) EndRound(1);
             else if (AliveTeam1 <= 0) EndRound(0);
@@ -165,8 +163,6 @@ namespace Game.Meta
             if (winnerTeam == 0) ScoreTeam0++;
             else ScoreTeam1++;
 
-            Debug.Log($"[Match] Round {CurrentRound} won by team {winnerTeam}. Score {ScoreTeam0} - {ScoreTeam1}");
-
             Phase = MatchPhase.RoundEnded;
             Timer = TickTimer.CreateFromSeconds(Runner, 2f);
         }
@@ -177,7 +173,6 @@ namespace Game.Meta
                 return;
 
             _spawner.DespawnAll();
-            Debug.Log($"[Match] Match ended. Score {ScoreTeam0} - {ScoreTeam1}");
             
             Winner = ScoreTeam0 > ScoreTeam1 ? 0 : 1;
             Phase = MatchPhase.Ended;
@@ -224,7 +219,9 @@ namespace Game.Meta
         private void OnMatchEndedEvent()
         {
             if (Winner != -1)
+            {
                 GameLauncher.Instance.EventBus.Publish(new MatchEndedEvent(Winner));
+            }
         }
 
         public void ReturnToLobby()

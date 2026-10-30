@@ -16,14 +16,13 @@ namespace Game.Core
         {
             DontDestroyOnLoad(gameObject);
 
+            //IsHost returns if this device is the host.
             if (Object.HasStateAuthority)
             {
                 PlayerRef = Object.InputAuthority;
                 IsHost = PlayerRef == Runner.LocalPlayer;
                 TeamId = MatchConstants.UNASSIGNED_TEAM;
             }
-            
-            Debug.Log($"Player {PlayerRef} joined the lobby. Host: {IsHost}");
         }
 
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
