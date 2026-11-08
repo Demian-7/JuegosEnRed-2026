@@ -139,11 +139,17 @@ namespace Game.Meta
                     {
                         var state = playerObj.GetComponent<NetworkPlayerState>();
                         
-                        //TODO: Print player's name: state.PlayerName;
+                        string playerName = state.PlayerName.ToString();
+                        
+                        if (string.IsNullOrWhiteSpace(playerName))
+                        {
+                            playerName = $"Player {state.PlayerRef.PlayerId}";
+                        }
+
                         if (state.TeamId == MatchConstants.TEAM_A)
-                            teamAString += $"Player {state.PlayerRef.PlayerId}\n";
+                            teamAString += $"{playerName}\n";
                         else if (state.TeamId == MatchConstants.TEAM_B)
-                            teamBString += $"Player {state.PlayerRef.PlayerId}\n";
+                            teamBString += $"{playerName}\n";
                     }
                 }
 

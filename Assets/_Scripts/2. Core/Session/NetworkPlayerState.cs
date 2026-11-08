@@ -22,19 +22,28 @@ namespace Game.Core
                 IsHost = PlayerRef == Runner.LocalPlayer;
                 TeamId = MatchConstants.UNASSIGNED_TEAM;
             }
+
+            if (Object.HasInputAuthority)
+            {
+                string localName = PlayerPrefs.GetString("PlayerName", $"Player {PlayerRef.PlayerId}");
+                RPC_SetPlayerName(localName);
+            }
             
             Debug.Log($"Player {PlayerRef} joined the lobby. Host: {IsHost}");
         }
 
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
+        public void RPC_SetPlayerName(NetworkString<_32> name)
+        {
+            PlayerName = name;
+        }
+
+        [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
         public void RPC_SetTeam(byte teamId)
         {
-            //TODO: validation (team was already full) before assigning, or after, on Match Start.
-            
             TeamId = teamId;
         }
 
-        // called from Ready button on the client
         [Rpc(RpcSources.InputAuthority, RpcTargets.StateAuthority)]
         public void RPC_SetReady(NetworkBool ready)
         {
