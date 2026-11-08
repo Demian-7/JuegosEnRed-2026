@@ -17,24 +17,45 @@ namespace Game.Meta
     public class MatchManager : NetworkBehaviour, IPlayerLeft
     {
         [SerializeField] private MatchSpawner _spawner;
+        [SerializeField] private HUDManager _hudManager;
+        [SerializeField] private EndScreenManager _endScreenManager;
         [SerializeField] private int _lobbySceneIndex = 1;
-        [SerializeField] private int _totalRounds = 3;
 
         [Networked] public MatchPhase Phase { get; set; }
         [Networked] public int CurrentRound { get; set; }
-        [Networked] public int ScoreTeam0 { get; set; }
-        [Networked] public int ScoreTeam1 { get; set; }
 
+        [Networked, OnChangedRender(nameof (OnMatchScoreUpdatePublish))] 
+        public int ScoreTeam0 { get; set; }
+
+        [Networked, OnChangedRender(nameof(OnMatchScoreUpdatePublish))] 
+        public int ScoreTeam1 { get; set; }
+
+        [Networked, OnChangedRender(nameof (OnMatchEndedEvent))]
+        public int Winner { get; set; }
         [Networked] public int AliveTeam0 { get; set; }
         [Networked] public int AliveTeam1 { get; set; }
         [Networked] private TickTimer Timer { get; set; }
+
+        private int _totalRounds => MatchSettings.Instance != null ? (int)MatchSettings.Instance.Rounds : 3;
 
         public override void Spawned()
         {
             if (Object.HasStateAuthority)
             {
-                Runner.GetComponentInParent<GameLauncher>().EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
+                GameLauncher.Instance.EventBus.Subscribe<PlayerDiedEvent>(OnPlayerDied);
+
                 StartRound();
+            }
+                
+            _hudManager.Init(GameLauncher.Instance.EventBus);
+            _endScreenManager.Init(GameLauncher.Instance.EventBus);
+
+            // During the match each player only talks to their teammate.
+            int localTeam = GetTeamIndex(Runner.LocalPlayer);
+            if (localTeam >= 0)
+            {
+                byte voiceGroup = localTeam == 0 ? MatchConstants.TEAM_A : MatchConstants.TEAM_B;
+                GameLauncher.Instance.EventBus.Publish(new VoiceChannelChangedEvent(voiceGroup));
             }
         }
 
@@ -42,8 +63,7 @@ namespace Game.Meta
         {
             if (Object.HasStateAuthority)
             {
-                runner.GetComponentInParent<GameLauncher>()?.EventBus
-                    .Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
+                GameLauncher.Instance.EventBus.Unsubscribe<PlayerDiedEvent>(OnPlayerDied);
             }
         }
 
@@ -74,21 +94,13 @@ namespace Game.Meta
         {
             if (Phase != MatchPhase.Playing)
                 return;
-            
-            //"Emulate" StubTeammatePairing logic to find this player's team.
-            //When real TeamAssignmentService si built, use it instead.
-            var sorted = new List<PlayerRef>(Runner.ActivePlayers);
-            sorted.Sort((a, b) => a.PlayerId.CompareTo(b.PlayerId));
 
-            int index = sorted.IndexOf(evt.DeadPlayer);
-            if (index < 0)
+            int teamId = GetTeamIndex(evt.DeadPlayer);
+            if (teamId < 0)
             {
                 Debug.LogError("Dead player's index is < 0??");
                 return;
             }
-
-            //Players 0 & 1 are Team 0, players 2 & 3 are Team 1.
-            int teamId = (index < 2) ? 0 : 1;
 
             if (teamId == 0)
             {
@@ -111,6 +123,21 @@ namespace Game.Meta
             }
         }
         
+        //"Emulate" StubTeammatePairing logic to find a player's team (0 or 1), -1 if not found.
+        //When real TeamAssignmentService si built, use it instead.
+        private int GetTeamIndex(PlayerRef player)
+        {
+            var sorted = new List<PlayerRef>(Runner.ActivePlayers);
+            sorted.Sort((a, b) => a.PlayerId.CompareTo(b.PlayerId));
+
+            int index = sorted.IndexOf(player);
+            if (index < 0)
+                return -1;
+
+            //Players 0 & 1 are Team 0, players 2 & 3 are Team 1.
+            return (index < 2) ? 0 : 1;
+        }
+
         // Call this on the host when a team is fully dead.
         public void EndRound(int winnerTeam)
         {
@@ -121,6 +148,8 @@ namespace Game.Meta
             else ScoreTeam1++;
 
             Debug.Log($"[Match] Round {CurrentRound} won by team {winnerTeam}. Score {ScoreTeam0} - {ScoreTeam1}");
+            
+
             Phase = MatchPhase.RoundEnded;
             Timer = TickTimer.CreateFromSeconds(Runner, 2f);
         }
@@ -139,11 +168,7 @@ namespace Game.Meta
         public void PlayerLeft(PlayerRef player)
         {
             if (Object.HasStateAuthority)
-            {
-                Rpc_NotifyMatchAborted();
-                
                 EndMatch();
-            }
         }
 
         public override void FixedUpdateNetwork()
@@ -160,7 +185,7 @@ namespace Game.Meta
             }
             else if (Phase == MatchPhase.Ended)
             {
-                Runner.LoadScene(SceneRef.FromIndex(_lobbySceneIndex));
+                CalculateWinner();
             }
         }
         
@@ -178,12 +203,30 @@ namespace Game.Meta
             }
         }
 
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        private void Rpc_NotifyMatchAborted()
+        private void OnMatchScoreUpdatePublish()
         {
-            if (Runner.GetComponentInParent<GameLauncher>() != null)
+            GameLauncher.Instance.EventBus.Publish(new MatchScoreUpdateEvent(ScoreTeam0, ScoreTeam1));
+        }
+
+        private void OnMatchEndedEvent()
+        {
+            GameLauncher.Instance.EventBus.Publish(new MatchEndedEvent(Winner));
+        }
+
+        public void ReturnToLobby()
+        {
+            Runner.LoadScene(SceneRef.FromIndex(_lobbySceneIndex));
+        }
+
+        private void CalculateWinner()
+        {
+            if (ScoreTeam0 > ScoreTeam1)
             {
-                Runner.GetComponentInParent<GameLauncher>().SetFeedback("A player disconnected. Match aborted.");
+                Winner = 1;
+            }
+            else
+            {
+                Winner = 2;
             }
         }
     }

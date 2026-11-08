@@ -12,8 +12,8 @@ PlayerSettings:
   targetDevice: 2
   useOnDemandResources: 0
   accelerometerFrequency: 60
-  companyName: DefaultCompany
-  productName: JuegosEnRed-2026
+  companyName: N.A.T.K
+  productName: Not Average Tank(K) Game
   defaultCursor: {fileID: 0}
   cursorHotspot: {x: 0, y: 0}
   m_SplashScreenBackgroundColor: {r: 0.13725491, g: 0.12156863, b: 0.1254902, a: 1}
@@ -147,7 +147,7 @@ PlayerSettings:
   loadStoreDebugModeEnabled: 0
   visionOSBundleVersion: 1.0
   tvOSBundleVersion: 1.0
-  bundleVersion: 0.1.0
+  bundleVersion: 0.3.0
   preloadedAssets:
   - {fileID: -944628639613478452, guid: 052faaac586de48259a63d0c4782560b, type: 3}
   metroInputSource: 0
@@ -577,7 +577,7 @@ PlayerSettings:
   enableCrashReportAPI: 0
   cameraUsageDescription: 
   locationUsageDescription: 
-  microphoneUsageDescription: 
+  microphoneUsageDescription: Voice Chat
   bluetoothUsageDescription: 
   macOSTargetOSVersion: 12.0
   switchNMETAOverride: 
@@ -834,7 +834,24 @@ PlayerSettings:
   webWasm2023: 0
   webEnableSubmoduleStrippingCompatibility: 0
   scriptingDefineSymbols:
-    Standalone: FUSION_LOGLEVEL_INFO;FUSION_WEAVER;FUSION2;FUSION_2;FUSION_2_0;FUSION_2_0_12;FUSION_2_OR_NEWER;FUSION_2_0_OR_NEWER
+    Android: PHOTON_VOICE_R4;CROSS_PLATFORM_INPUT;MOBILE_INPUT
+    EmbeddedLinux: PHOTON_VOICE_R4
+    GameCoreScarlett: PHOTON_VOICE_R4
+    GameCoreXboxOne: PHOTON_VOICE_R4
+    Kepler: PHOTON_VOICE_R4
+    LinuxHeadlessSimulation: PHOTON_VOICE_R4
+    Nintendo Switch: PHOTON_VOICE_R4
+    Nintendo Switch 2: PHOTON_VOICE_R4
+    PS4: PHOTON_VOICE_R4
+    PS5: PHOTON_VOICE_R4
+    QNX: PHOTON_VOICE_R4
+    Standalone: FUSION_LOGLEVEL_INFO;FUSION_WEAVER;FUSION2;FUSION_2;FUSION_2_0;FUSION_2_0_12;FUSION_2_OR_NEWER;FUSION_2_0_OR_NEWER;PHOTON_REALTIME_4;PHOTON_VOICE_R4;CROSS_PLATFORM_INPUT
+    VisionOS: PHOTON_VOICE_R4
+    WebGL: PHOTON_VOICE_R4
+    Windows Store Apps: PHOTON_VOICE_R4;MOBILE_INPUT
+    XboxOne: PHOTON_VOICE_R4
+    iPhone: PHOTON_VOICE_R4;CROSS_PLATFORM_INPUT;MOBILE_INPUT
+    tvOS: PHOTON_VOICE_R4
   additionalCompilerArguments: {}
   platformArchitecture: {}
   scriptingBackend:

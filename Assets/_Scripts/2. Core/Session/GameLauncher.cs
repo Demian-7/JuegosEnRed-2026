@@ -12,7 +12,7 @@ namespace Game.Core
     public class GameLauncher : MonoBehaviour, INetworkRunnerCallbacks
     {
         public IEventBus EventBus { get; private set; }
-        public string SceneTransitionFeedback { get; private set; }
+        public static GameLauncher Instance { get; private set; }
 
         [SerializeField] private NetworkPlayerState _playerStatePrefab;
         [SerializeField] private LocalInputProvider _localInputProvider;
@@ -26,17 +26,15 @@ namespace Game.Core
         [SerializeField] private int _menuSceneIndex = 0;
         [SerializeField] private int _lobbySceneIndex = 1;
 
-        private static GameLauncher _instance;
-
         private void Awake()
         {
-            if (_instance != null && _instance != this)
+            if (Instance != null && Instance != this)
             {
                 Destroy(gameObject);
                 return;
             }
 
-            _instance = this;
+            Instance = this;
             DontDestroyOnLoad(gameObject);
             
             EventBus = new EventBus();
@@ -108,18 +106,6 @@ namespace Game.Core
 
             return result;
         }
-        
-        public void SetFeedback(string message)
-        {
-            SceneTransitionFeedback = message;
-        }
-
-        public string ConsumeFeedback()
-        {
-            string msg = SceneTransitionFeedback;
-            SceneTransitionFeedback = null;
-            return msg;
-        }
 
         public void OnPlayerJoined(NetworkRunner runner, PlayerRef player)
         {
@@ -154,20 +140,6 @@ namespace Game.Core
             }
             
             _objectPool.ClearPools();
-
-            if (shutdownReason != ShutdownReason.Ok)
-            {
-                string feedback = shutdownReason switch
-                {
-                    ShutdownReason.GameClosed => "The session was closed.", 
-                    ShutdownReason.DisconnectedByPluginLogic => "Connection rejected by server (Check App ID or Room Code).",
-                    ShutdownReason.GameNotFound => "Room not found.",
-                    ShutdownReason.ConnectionTimeout => "Connection timed out.",
-                    _ => $"Connection lost: {shutdownReason}"
-                };
-                
-                SetFeedback(feedback);
-            }
     
             if (UnityEngine.SceneManagement.SceneManager.GetActiveScene().buildIndex != _menuSceneIndex)
             {
