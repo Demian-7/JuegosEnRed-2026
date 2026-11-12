@@ -132,6 +132,9 @@ namespace Game.Meta
             {
                 string teamAString = "";
                 string teamBString = "";
+                
+                int teamACount = 0;
+                int teamBCount = 0;
 
                 foreach (var player in _runner.ActivePlayers)
                 {
@@ -147,14 +150,23 @@ namespace Game.Meta
                         }
 
                         if (state.TeamId == MatchConstants.TEAM_A)
+                        {
                             teamAString += $"{playerName}\n";
+                            teamACount++;
+                        }
                         else if (state.TeamId == MatchConstants.TEAM_B)
+                        {
                             teamBString += $"{playerName}\n";
+                            teamBCount++;
+                        }
                     }
                 }
 
                 _teamARosterText.text = teamAString;
                 _teamBRosterText.text = teamBString;
+
+                _joinTeamAButton.interactable = teamACount < 2;
+                _joinTeamBButton.interactable = teamBCount < 2;
             }
         }
 

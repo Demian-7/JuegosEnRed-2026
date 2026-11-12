@@ -42,6 +42,7 @@ namespace Game.Meta
             if (MatchSettings.Instance.TeamMode == ETeamSelectionMode.Manual && !ValidateManualTeams())
             {
                 Debug.Log("Can't start: Manual teams are not balanced 2v2.");
+                return;
             }
 
 
