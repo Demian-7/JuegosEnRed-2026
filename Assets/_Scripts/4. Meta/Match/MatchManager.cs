@@ -24,7 +24,9 @@ namespace Game.Meta
         [SerializeField] private EndScreenManager _endScreenManager;
         [SerializeField] private int _lobbySceneIndex = 1;
 
-        [Networked] public MatchPhase Phase { get; set; }
+        [Networked, OnChangedRender(nameof(UpdateLocalVoiceChannel))] 
+        public MatchPhase Phase { get; set; }
+        
         [Networked] public int CurrentRound { get; set; }
         [Networked] public int LastRoundWinner { get; set; }
 
@@ -57,12 +59,7 @@ namespace Game.Meta
             _hudManager.Init(GameLauncher.Instance.EventBus);
             _endScreenManager.Init(GameLauncher.Instance.EventBus);
 
-            int localTeam = GetTeamIndex(Runner.LocalPlayer);
-            if (localTeam >= 0)
-            {
-                byte voiceGroup = localTeam == 0 ? MatchConstants.TEAM_A : MatchConstants.TEAM_B;
-                GameLauncher.Instance.EventBus.Publish(new VoiceChannelChangedEvent(voiceGroup));
-            }
+            UpdateLocalVoiceChannel();
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
@@ -177,6 +174,18 @@ namespace Game.Meta
                 if (bullet.Object != null && bullet.Object.IsValid)
                     Runner.Despawn(bullet.Object);
             }
+        }
+
+        private void UpdateLocalVoiceChannel()
+        {
+            int localTeam = GetTeamIndex(Runner.LocalPlayer);
+            if (localTeam < 0) return;
+
+            byte voiceGroup = (Phase == MatchPhase.Playing) 
+                ? (localTeam == 0 ? MatchConstants.TEAM_A : MatchConstants.TEAM_B) 
+                : VoiceChannelService.EVERYONE_GROUP;
+
+            GameLauncher.Instance.EventBus.Publish(new VoiceChannelChangedEvent(voiceGroup));
         }
 
         private void OnMatchScoreUpdatePublish() => GameLauncher.Instance.EventBus.Publish(new MatchScoreUpdateEvent(ScoreTeam0, ScoreTeam1));
