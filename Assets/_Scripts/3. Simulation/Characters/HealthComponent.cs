@@ -30,7 +30,7 @@ namespace Game.Simulation
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         private void Rpc_TriggerDeathPresentation()
         {
-            CameraShake.AddTrauma(1f); 
+            CameraRig.AddTrauma(1f); 
             
             gameObject.SetActive(false);
             

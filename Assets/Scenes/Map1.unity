@@ -618,6 +618,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 4058231599013272306, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 300
+      objectReference: {fileID: 0}
     - target: {fileID: 6099982560534529582, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
       propertyPath: m_Name
       value: HUD
@@ -976,6 +980,7 @@ MonoBehaviour:
   _reloadingState: {fileID: 0}
   _dashState: {fileID: 0}
   _matchState: {fileID: 0}
+  _countdownText: {fileID: 0}
 --- !u!4 &1163917226
 Transform:
   m_ObjectHideFlags: 0

@@ -1,63 +1,67 @@
 using Game.Foundation;
+using Game.Meta;
 using TMPro;
 using UnityEngine;
 
 public class HUDManager : MonoBehaviour
 {
     private IEventBus _eventBus;
+    
     [SerializeField] private TMP_Text _actualBullets;
     [SerializeField] private TMP_Text _reloadingState;
     [SerializeField] private TMP_Text _dashState;
     [SerializeField] private TMP_Text _matchState;
+    [SerializeField] private TMP_Text _countdownText;
 
+    private float _shootTextLingerTimer;
 
     public void Init(IEventBus eventBus)
     {
         _eventBus = eventBus;
-        Debug.Log(_eventBus);
         _eventBus.Subscribe<MatchScoreUpdateEvent>(OnMatchStateUpdate);
         _eventBus.Subscribe<CurrentBulletsUpdateEvent>(OnBulletsUpdate);
         _eventBus.Subscribe<ReloadingStateChangedEvent>(OnUpdateReloadingState);
         _eventBus.Subscribe<DashStateChangedEvent>(OnDashStateChanged);
-        Debug.Log("Hud Manager start");
-    }
-    public void OnBulletsUpdate(CurrentBulletsUpdateEvent evt)
-    {
-        Debug.Log("OnBulletsUpdate");
-        _actualBullets.text = $"{evt.currentBullets} / 1";
+        
+        _countdownText.text = "";
     }
 
-    public void OnUpdateReloadingState(ReloadingStateChangedEvent evt) 
+    private void Update()
     {
-        if (evt.reloading) 
+        if (MatchManager.Instance == null || MatchManager.Instance.Runner == null) return;
+
+        if (MatchManager.Instance.Phase == MatchPhase.PreRound)
         {
-            _reloadingState.text = "Reloading";
+            float? remaining = MatchManager.Instance.Timer.RemainingTime(MatchManager.Instance.Runner);
+            if (remaining.HasValue)
+            {
+                int seconds = Mathf.CeilToInt(remaining.Value);
+                _countdownText.text = seconds.ToString();
+                _shootTextLingerTimer = 0f;
+            }
+        }
+        else if (MatchManager.Instance.Phase == MatchPhase.Playing)
+        {
+            if (_shootTextLingerTimer < 1f)
+            {
+                _countdownText.text = "Shoot!";
+                _shootTextLingerTimer += Time.deltaTime;
+            }
+            else
+            {
+                _countdownText.text = "";
+            }
         }
         else
         {
-            _reloadingState.text = "";
-
-        }
-
-    }
-
-
-    public void OnDashStateChanged(DashStateChangedEvent evt) 
-    {
-        if (evt.canDash)
-        {
-            _dashState.text = "Ready";
-        }
-        else
-        {
-            _dashState.text = "Cooldown";
-
+            _countdownText.text = "";
         }
     }
-    public void OnMatchStateUpdate(MatchScoreUpdateEvent evt) 
-    {
-        _matchState.text = $"{evt.team0Rounds} - {evt.team1Rounds}";
-    }
+
+    public void OnBulletsUpdate(CurrentBulletsUpdateEvent evt) => _actualBullets.text = $"{evt.currentBullets} / 1";
+    public void OnUpdateReloadingState(ReloadingStateChangedEvent evt) => _reloadingState.text = evt.reloading ? "Reloading" : "";
+    public void OnDashStateChanged(DashStateChangedEvent evt) => _dashState.text = evt.canDash ? "Ready" : "Cooldown";
+    public void OnMatchStateUpdate(MatchScoreUpdateEvent evt) => _matchState.text = $"{evt.team0Rounds} - {evt.team1Rounds}";
 
     private void OnDisable()
     {
