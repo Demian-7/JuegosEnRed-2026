@@ -26,6 +26,7 @@ namespace Game.Meta
 
         [Networked] public MatchPhase Phase { get; set; }
         [Networked] public int CurrentRound { get; set; }
+        [Networked] public int LastRoundWinner { get; set; }
 
         [Networked, OnChangedRender(nameof(OnMatchScoreUpdatePublish))] 
         public int ScoreTeam0 { get; set; }
@@ -126,8 +127,10 @@ namespace Game.Meta
             if (winnerTeam == 0) ScoreTeam0++;
             else ScoreTeam1++;
 
+            LastRoundWinner = winnerTeam;
             Phase = MatchPhase.RoundEnded;
-            Timer = TickTimer.CreateFromSeconds(Runner, 2f);
+    
+            Timer = TickTimer.CreateFromSeconds(Runner, 4f); 
         }
 
         public void EndMatch()

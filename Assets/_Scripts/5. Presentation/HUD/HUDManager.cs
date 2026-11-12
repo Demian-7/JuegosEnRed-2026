@@ -30,14 +30,18 @@ public class HUDManager : MonoBehaviour
     {
         if (MatchManager.Instance == null || MatchManager.Instance.Runner == null) return;
 
-        if (MatchManager.Instance.Phase == MatchPhase.PreRound)
+        if (MatchManager.Instance.Phase == MatchPhase.RoundEnded)
+        {
+            _countdownText.text = $"Team {MatchManager.Instance.LastRoundWinner} wins the round!\nScore: {MatchManager.Instance.ScoreTeam0} - {MatchManager.Instance.ScoreTeam1}";
+        }
+        else if (MatchManager.Instance.Phase == MatchPhase.PreRound)
         {
             float? remaining = MatchManager.Instance.Timer.RemainingTime(MatchManager.Instance.Runner);
             if (remaining.HasValue)
             {
                 int seconds = Mathf.CeilToInt(remaining.Value);
                 _countdownText.text = seconds.ToString();
-                _shootTextLingerTimer = 0f;
+                _shootTextLingerTimer = 0f; 
             }
         }
         else if (MatchManager.Instance.Phase == MatchPhase.Playing)
@@ -51,6 +55,10 @@ public class HUDManager : MonoBehaviour
             {
                 _countdownText.text = "";
             }
+        }
+        else if (MatchManager.Instance.Phase == MatchPhase.Ended)
+        {
+            _countdownText.text = $"Match Over!\nTeam {MatchManager.Instance.Winner} Wins!";
         }
         else
         {
