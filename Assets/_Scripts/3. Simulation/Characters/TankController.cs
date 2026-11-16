@@ -69,7 +69,7 @@ namespace Game.Simulation
                     _movement.TryDash();
 
                 if (abilityInput.Buttons.WasPressed(_previousButtons, EAbilityButton.Shoot))
-                    _ability.TryShoot(abilityInput.AimWorldPosition);
+                    _ability.TryShoot(AbilitySource, abilityInput.AimWorldPosition);
 
                 _previousButtons = abilityInput.Buttons;
             }

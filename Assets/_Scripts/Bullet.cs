@@ -6,79 +6,131 @@ namespace Game.Simulation
 {
     public class Bullet : NetworkBehaviour
     {
-        public static readonly HashSet<Bullet> ActiveBullets = new HashSet<Bullet>();
+        public static readonly HashSet<Bullet> ActiveBullets = new();
 
-        [SerializeField] private float _bulletSpeed = 10f;
+        [SerializeField] private float _speed = 10f;
         [SerializeField] private float _lifetime = 2f;
-        [SerializeField] private NetworkPrefabRef _hitEffectPrefab;
+        [SerializeField] private LayerMask _wallMask;
+        [SerializeField] private LayerMask _hitboxMask;
+        [SerializeField] private GameObject _visual;
+        [SerializeField] private GameObject _hitEffectPrefab;
 
-        [Networked] private Vector3 Direction { get; set; }
-        [Networked] private TickTimer LifeTimer { get; set; }
+        [Networked] private Vector2 Position { get; set; }
+        [Networked, OnChangedRender(nameof(OnHitChanged))] private NetworkBool Hit { get; set; }
+        [Networked] private Vector2 HitPoint { get; set; }
 
-        private Rigidbody2D _rb;
+        private Vector2 _origin;
+        private Vector2 _direction;
+        private int _fireTick;
+        private PlayerRef _shooter;
+        private NetworkId _ignoredRoot;
+        private TickTimer _despawnTimer;
+
+        private static readonly List<LagCompensatedHit> _hits = new();
+        private float _radius;
 
         private void Awake()
         {
-            _rb = GetComponent<Rigidbody2D>();
+            _radius = _visual.GetComponent<SpriteRenderer>().bounds.extents.x;
+        }
+
+        public void Init(Vector2 origin, Vector2 direction, PlayerRef shooter, NetworkId ignoredRoot)
+        {
+            _origin = origin;
+            _direction = direction;
+            _shooter = shooter;
+            _ignoredRoot = ignoredRoot;
+            _fireTick = Runner.Tick.Raw;
+            Position = origin;
+        }
+
+        private Vector2 PositionAt(float seconds) => _origin + _direction * (_speed * seconds);
+
+        public override void FixedUpdateNetwork()
+        {
+            if (!Object.HasStateAuthority) return;
+
+            if (Hit)
+            {
+                if (_despawnTimer.Expired(Runner)) Runner.Despawn(Object);
+                return;
+            }
+
+            float dt = Runner.DeltaTime;
+            int age = Runner.Tick.Raw - _fireTick;
+
+            if (age * dt >= _lifetime)
+            {
+                Runner.Despawn(Object);
+                return;
+            }
+
+            Vector2 from = PositionAt(age * dt);
+            Vector2 to = PositionAt((age + 1) * dt);
+            Position = to;
+
+            Vector2 delta = to - from;
+            float dist = delta.magnitude;
+
+            var wall = Runner.GetPhysicsScene2D().CircleCast(from, _radius, delta / dist, dist, _wallMask);
+            if (wall.collider != null)
+            {
+                RegisterHit(wall.centroid);
+                return;
+            }
+
+            _hits.Clear();
+            int count = Runner.LagCompensation.OverlapSphere(
+                to, _radius, _shooter, _hits, _hitboxMask, HitOptions.None);
+
+            for (int i = 0; i < count; i++)
+            {
+                var go = _hits[i].GameObject;
+                if (go == null) continue;
+
+                var no = go.GetComponentInParent<NetworkObject>();
+                if (no != null && no.Id == _ignoredRoot) continue;
+
+                var dmg = go.GetComponentInParent<IDamageable>();
+                if (dmg == null) continue;
+
+                dmg.DamageableHit();
+                RegisterHit(to);
+                return;
+            }
+        }
+
+        private void RegisterHit(Vector2 point)
+        {
+            Hit = true;
+            HitPoint = point;
+            _despawnTimer = TickTimer.CreateFromSeconds(Runner, 0.25f);
+        }
+
+        public override void Render()
+        {
+            transform.position = Hit ? HitPoint : Position;
+        }
+
+        private void OnHitChanged()
+        {
+            _visual.SetActive(!Hit);
+
+            if (Hit && _hitEffectPrefab != null)
+                Instantiate(_hitEffectPrefab, HitPoint, Quaternion.identity);
         }
 
         public override void Spawned()
         {
+            _visual.SetActive(!Hit);
+
             if (Object.HasStateAuthority)
-            {
                 ActiveBullets.Add(this);
-            }
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
-            if (hasState)
-            {
-                ActiveBullets.Remove(this);
-            }
-        }
-
-        public void Init(Vector3 direction)
-        {
-            Direction = direction;
-            LifeTimer = TickTimer.CreateFromSeconds(Runner, _lifetime);
-
-            if (_rb != null)
-            {
-                _rb.linearVelocity = Vector2.zero;
-                _rb.angularVelocity = 0f;
-            }
-        }
-
-        public override void FixedUpdateNetwork()
-        {
-            _rb.linearVelocity = Direction * _bulletSpeed * Runner.DeltaTime;
-
-            if (LifeTimer.Expired(Runner))
-            {
-                Runner.Despawn(Object);
-            }
-        }
-
-        private void OnTriggerEnter2D(Collider2D collision)
-        {
-            if (!Object.HasStateAuthority)
-                return;
-
-            if (collision.TryGetComponent<IDamageable>(out var dmg))
-            {
-                dmg.DamageableHit();
-            }
-            
-            RPC_PlayHitEffect(_hitEffectPrefab, transform.position);
-
-            Runner.Despawn(Object);
-        }
-        
-        [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
-        public void RPC_PlayHitEffect(NetworkPrefabRef prefab, Vector3 spawnPoint, RpcInfo info = default)
-        {
-            var obj = Runner.Spawn(prefab, spawnPoint);
+            ActiveBullets.Remove(this);
         }
     }
 }

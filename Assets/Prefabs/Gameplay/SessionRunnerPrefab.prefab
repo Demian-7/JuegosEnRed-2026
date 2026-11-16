@@ -15,6 +15,7 @@ GameObject:
   - component: {fileID: 2044557832827595679}
   - component: {fileID: 4761633752589783452}
   - component: {fileID: 1462327430219925804}
+  - component: {fileID: 3395417921474749657}
   m_Layer: 0
   m_Name: SessionRunnerPrefab
   m_TagString: Untagged
@@ -178,3 +179,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 858608d296b00423f987878f100d2893, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Core.VoiceChannelService
+--- !u!114 &3395417921474749657
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 390436160459306403}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -49887739, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.HitboxManager
+  BVHDepth: 0
+  BVHNodes: 0
+  TotalHitboxes: 0

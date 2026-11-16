@@ -31,24 +31,18 @@ public class AbilityController : NetworkBehaviour
         _runner = runner;
     }
 
-    public void TryShoot(Vector2 aimWorldPosition)
+    public void TryShoot(PlayerRef shooter, Vector2 aimWorldPosition)
     {
-        //Intentar resolver disparo si las condiciones se cumplen: - Municion disponible - Interrupciones
-
-        if (!(BulletCount > 0))
+        if (BulletCount <= 0)
             return;
-
-
-
-
-        //Llamar al disparo
-        Shoot(aimWorldPosition);
+        
+        Shoot(shooter, aimWorldPosition);
     }
 
-    private void Shoot(Vector2 aimWorldPosition)
+    private void Shoot(PlayerRef shooter, Vector2 aim)
     {
         LocalShoot();
-        HostShoot(aimWorldPosition);
+        HostShoot(shooter, aim);
     }
 
     private void ReloadWeapon()
@@ -71,14 +65,10 @@ public class AbilityController : NetworkBehaviour
         }
     }
 
-
-
     private void LocalShoot()
     {
         Debug.Log("Local shoot");
         BulletCount--;
-
-
 
         if (BulletCount == 0)
         {
@@ -87,24 +77,17 @@ public class AbilityController : NetworkBehaviour
         }
     }
 
-    private void HostShoot(Vector2 aimWorldPosition)
+    private void HostShoot(PlayerRef shooter, Vector2 aim)
     {
         if (!Object.HasStateAuthority)
             return;
 
-        // Direction from this tank to where the teammate is aiming
-        Vector3 direction = (Vector3)aimWorldPosition - transform.position;
-        direction.z = 0f;
-        direction.Normalize();
-
-        // Spawn a bit in front so the bullet doesn't start inside the tank
-        Vector3 spawnPosition = transform.position + direction * 1f;
-
-        NetworkObject bullet = Runner.Spawn(_bulletPrefab, spawnPosition, Quaternion.identity);
-        bullet.GetComponent<Bullet>().Init(direction);
+        Vector2 dir = (aim - (Vector2)transform.position).normalized;
+        Vector2 spawnPos = (Vector2)transform.position + dir * 1f;
+        
+        NetworkObject bullet = Runner.Spawn(_bulletPrefab, spawnPos, Quaternion.identity);
+        bullet.GetComponent<Bullet>().Init(spawnPos, dir, shooter, Object.Id);
     }
-
-
     
     private void OnCurrentBulletsUpdatePublish()
     {

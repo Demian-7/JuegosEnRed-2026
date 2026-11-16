@@ -137,6 +137,58 @@ MonoBehaviour:
   m_hasFontAssetChanged: 0
   m_baseMaterial: {fileID: 0}
   m_maskOffset: {x: 0, y: 0, z: 0, w: 0}
+--- !u!1 &6288801326071803118
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 8353531356560159601}
+  - component: {fileID: 7034655224099041531}
+  m_Layer: 8
+  m_Name: Hitbox
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &8353531356560159601
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6288801326071803118}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 3156609609844463442}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &7034655224099041531
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6288801326071803118}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1014831617, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.Hitbox
+  Type: 1
+  SphereRadius: 0
+  CapsuleRadius: 0
+  BoxExtents: {x: 0.5, y: 0.5, z: 0.1}
+  CapsuleExtents: 0
+  Offset: {x: 0, y: 0, z: 0}
+  Root: {fileID: 0}
+  GizmosColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
 --- !u!1 &8805045330618663036
 GameObject:
   m_ObjectHideFlags: 0
@@ -154,6 +206,7 @@ GameObject:
   - component: {fileID: 2726570071421984441}
   - component: {fileID: 1691892148011108053}
   - component: {fileID: 8942953215965413965}
+  - component: {fileID: 5230383912970081964}
   m_Layer: 0
   m_Name: Tank
   m_TagString: Untagged
@@ -176,6 +229,7 @@ Transform:
   m_Children:
   - {fileID: 8169419306483182739}
   - {fileID: 1924822388892002115}
+  - {fileID: 8353531356560159601}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &64014500229700714
@@ -200,6 +254,7 @@ MonoBehaviour:
   - {fileID: 4359779392069644949}
   - {fileID: 1691892148011108053}
   - {fileID: 8942953215965413965}
+  - {fileID: 5230383912970081964}
   ForceRemoteRenderTimeframe: 0
 --- !u!114 &938001107232714999
 MonoBehaviour:
@@ -360,6 +415,24 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
   _IsAlive:
     _value: 1
+--- !u!114 &5230383912970081964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8805045330618663036}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 1039544458, guid: e725a070cec140c4caffb81624c8c787, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Fusion.Runtime.dll::Fusion.HitboxRoot
+  Config: 3
+  BroadRadius: 0.72
+  Offset: {x: 0, y: 0, z: 0}
+  GizmosColor: {r: 0, g: 0, b: 0, a: 1}
+  Hitboxes:
+  - {fileID: 7034655224099041531}
 --- !u!1 &9080973091871501905
 GameObject:
   m_ObjectHideFlags: 0
@@ -567,3 +640,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.TankUI
   _nameText: {fileID: 6419596531689582079}
+  _tank: {fileID: 0}
