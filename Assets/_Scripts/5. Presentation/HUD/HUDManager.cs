@@ -56,7 +56,7 @@ public class HUDManager : MonoBehaviour
                 _countdownText.text = "";
             }
         }
-        else if (MatchManager.Instance.Phase == MatchPhase.Ended)
+        else if (MatchManager.Instance.Phase == MatchPhase.Ended || MatchManager.Instance.Phase == MatchPhase.PostMatch)
         {
             _countdownText.text = $"Match Over!\nTeam {MatchManager.Instance.Winner} Wins!";
         }
