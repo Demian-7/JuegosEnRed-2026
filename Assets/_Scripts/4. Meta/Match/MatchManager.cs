@@ -80,6 +80,8 @@ namespace Game.Meta
 
         private void StartRound()
         {
+            
+
             CurrentRound++;
             Phase = MatchPhase.PreRound;
             Timer = TickTimer.CreateFromSeconds(Runner, 3f);
@@ -92,6 +94,7 @@ namespace Game.Meta
             AliveTeam1 = 2;
             
             Debug.Log($"[Match] Round {CurrentRound} starting. Pre-round countdown begun.");
+            GameLauncher.Instance._liveOpsManager.PublishRemoteConfigEvent();
         }
 
         private void OnPlayerDied(PlayerDiedEvent evt)

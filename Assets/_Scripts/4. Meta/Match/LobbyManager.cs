@@ -10,7 +10,7 @@ namespace Game.Meta
 {
     public class LobbyManager : NetworkBehaviour
     {
-        private const int RequiredPlayers = 2;
+        private int RequiredPlayers = 2;
 
         [Tooltip("The build index of the gameplay arena scene")] [SerializeField]
         private int _gameplaySceneIndex = 1;
@@ -22,6 +22,7 @@ namespace Game.Meta
         private void Awake()
         {
             _startButton.onClick.AddListener(StartMatch);
+            RequiredPlayers = GameLauncher.Instance._liveOpsManager.LOBBY_REQUIRED_PLAYERS;
         }
 
         /// <summary>
@@ -58,7 +59,7 @@ namespace Game.Meta
 
                 Runner.SessionInfo.IsOpen = false;
              
-
+    
             LoadSelectedLevel(map);
         }
 
