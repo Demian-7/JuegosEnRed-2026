@@ -29,6 +29,7 @@ public class AbilityController : NetworkBehaviour
     public void Init(NetworkRunner runner)
     {
         _runner = runner;
+        GameLauncher.Instance.EventBus.Subscribe<RemoteConfigEvent>(OnRemoteConfigEvent);
     }
 
     public void TryShoot(PlayerRef shooter, Vector2 aimWorldPosition)
@@ -104,6 +105,21 @@ public class AbilityController : NetworkBehaviour
     private void OnReloadingStatePublish()
     {
         GameLauncher.Instance.EventBus.Publish(new ReloadingStateChangedEvent(Reloading));
+    }
+
+
+    private void OnRemoteConfigEvent(RemoteConfigEvent evt)
+    {
+        MaxBullets = evt.ability_max_bullets;
+        ReloadTime = evt.ability_reload_time;
+    }
+
+    private void OnDestroy()
+    {
+        if (GameLauncher.Instance != null)
+        {
+            GameLauncher.Instance.EventBus.Unsubscribe<RemoteConfigEvent>(OnRemoteConfigEvent);
+        }
     }
 
 }

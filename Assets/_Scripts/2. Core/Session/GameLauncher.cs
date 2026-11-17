@@ -5,6 +5,9 @@ using Fusion;
 using Fusion.Addons.Physics;
 using Fusion.Sockets;
 using Game.Foundation;
+using Unity.Services.Authentication;
+using Unity.Services.Core;
+using Unity.Services.RemoteConfig;
 using UnityEngine;
 
 namespace Game.Core
@@ -17,6 +20,7 @@ namespace Game.Core
         [SerializeField] private NetworkPlayerState _playerStatePrefab;
         [SerializeField] private LocalInputProvider _localInputProvider;
         [SerializeField] private GameObject _runnerPrefab;
+        [SerializeField] public LiveOpsManager _liveOpsManager;
 
         private NetworkRunner _runner;
         private NetworkSceneManagerDefault _sceneManager;
@@ -40,6 +44,7 @@ namespace Game.Core
             EventBus = new EventBus();
 
             _objectPool = gameObject.AddComponent<FusionObjectPool>();
+            _liveOpsManager.Init(EventBus);
         }
         
         private void CreateRunner()
@@ -146,6 +151,7 @@ namespace Game.Core
                 UnityEngine.SceneManagement.SceneManager.LoadScene(_menuSceneIndex);
             }
         }
+
 
         #region Unused Callbacks
 
