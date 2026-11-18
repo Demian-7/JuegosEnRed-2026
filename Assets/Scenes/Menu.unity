@@ -251,7 +251,7 @@ MonoBehaviour:
     Volume: 1
   - Sfx: 5
     Clip: {fileID: 8300000, guid: 6d416fbb64f14449baa691b2ee0233d5, type: 3}
-    Volume: 0.637
+    Volume: 0.073
   - Sfx: 6
     Clip: {fileID: 8300000, guid: a196318a02f51436fb644c72ad64b28f, type: 3}
     Volume: 1
