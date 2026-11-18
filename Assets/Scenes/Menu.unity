@@ -204,6 +204,7 @@ MonoBehaviour:
   _playerStatePrefab: {fileID: 2407495915640702063, guid: 282aa6925ef92134e97e23beed46189c, type: 3}
   _localInputProvider: {fileID: 243891367}
   _runnerPrefab: {fileID: 390436160459306403, guid: 98d8ca38170afbf42ae9cdb10fcd7e92, type: 3}
+  _liveOpsManager: {fileID: 1514081416}
   _menuSceneIndex: 0
   _lobbySceneIndex: 1
 --- !u!4 &170462031
@@ -220,6 +221,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 243891368}
+  - {fileID: 1514081417}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &170462032
@@ -1979,6 +1981,58 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1347295009}
   m_CullTransparentMesh: 1
+--- !u!1 &1514081415
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1514081417}
+  - component: {fileID: 1514081416}
+  m_Layer: 0
+  m_Name: LiveOpsManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1514081416
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1514081415}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b338cb8260aca9e46be4284903ca6bfb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LiveOpsManager
+  LOBBY_REQUIRED_PLAYERS: 2
+  tank_move_speed: 150
+  tank_dash_force: 100
+  tank_dash_cooldown: 3
+  bullet_speed: 10
+  bullet_lifetime: 10
+  ability_reload_time: 2
+  ability_max_bullets: 1
+--- !u!4 &1514081417
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1514081415}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -1.82742, y: 0.52963, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 170462031}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1616955296
 GameObject:
   m_ObjectHideFlags: 0

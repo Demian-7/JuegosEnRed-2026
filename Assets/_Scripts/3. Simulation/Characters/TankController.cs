@@ -1,7 +1,6 @@
 ﻿using Fusion;
 using Game.Foundation;
 using Game.Meta;
-using Game.Presentation;
 using UnityEngine;
 
 namespace Game.Simulation
@@ -32,11 +31,29 @@ namespace Game.Simulation
                 LocalTank = this;
             }
 
+            var sprite = GetComponentInChildren<SpriteRenderer>();
+            if (sprite != null) sprite.enabled = true;
+            
+            var canvas = GetComponentInChildren<Canvas>();
+            if (canvas != null) canvas.enabled = true;
+
             Colorize();
             _movement.Init(Runner);
             _ability.Init(Runner);
+        }
+
+        public override void Despawned(NetworkRunner runner, bool hasState)
+        {
+            if (LocalTank == this)
+            {
+                LocalTank = null;
+            }
+
+            var sprite = GetComponentInChildren<SpriteRenderer>();
+            if (sprite != null) sprite.enabled = false;
             
-            GetComponentInChildren<TankUI>()?.Init(this);
+            var canvas = GetComponentInChildren<Canvas>();
+            if (canvas != null) canvas.enabled = false;
         }
 
         private void Colorize()
@@ -45,7 +62,8 @@ namespace Game.Simulation
             if (MovementSource == Runner.LocalPlayer) color = Color.green;
             else if (AbilitySource == Runner.LocalPlayer) color = new Color(0, 225, 255);
 
-            GetComponentInChildren<SpriteRenderer>().color = color;
+            var sprite = GetComponentInChildren<SpriteRenderer>();
+            if (sprite != null) sprite.color = color;
         }
 
         public override void FixedUpdateNetwork()

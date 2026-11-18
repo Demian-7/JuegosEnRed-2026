@@ -28,6 +28,8 @@ namespace Game.Simulation
         public void Init(NetworkRunner runner)
         {
             _runner = runner;
+            GameLauncher.Instance.EventBus.Subscribe<RemoteConfigEvent>(OnRemoteConfigEvent);
+                                          
         }
         public void Simulate(Vector2 moveInput)
         {
@@ -84,5 +86,22 @@ namespace Game.Simulation
             if (!CanDash)
                 GameLauncher.Instance.EventBus.Publish(new SfxRequestedEvent(ESfx.Dash));
         }
+
+        private void OnRemoteConfigEvent(RemoteConfigEvent evt)
+        {
+            _moveSpeed = evt.tank_move_speed;
+            _dashForce = evt.tank_dash_force;
+            _dashCooldown = evt.tank_dash_cooldown;
+        }
+
+        private void OnDestroy()
+        {
+            if (GameLauncher.Instance != null)
+            {
+                GameLauncher.Instance.EventBus.Unsubscribe<RemoteConfigEvent>(OnRemoteConfigEvent);
+            } 
+        }
+
+
     }
 }

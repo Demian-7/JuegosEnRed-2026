@@ -25,7 +25,7 @@ namespace Game.Presentation
         private Vector3 _originLocalPos;
         private Vector3 _basePosition; 
         
-        private bool _hasTriggeredPreRound = false;
+        private TankController _currentTarget; 
 
         private void Awake()
         {
@@ -37,7 +37,7 @@ namespace Game.Presentation
 
             Instance = this;
             _cam = GetComponent<Camera>();
-            _cam.enabled = false;
+            _cam.enabled = false; 
             
             _originLocalPos = transform.localPosition;
             _basePosition = _originLocalPos;
@@ -53,23 +53,25 @@ namespace Game.Presentation
         {
             if (MatchManager.Instance != null)
             {
-                if (MatchManager.Instance.Phase == MatchPhase.PreRound && !_hasTriggeredPreRound)
+                if (TankController.LocalTank != null && TankController.LocalTank != _currentTarget)
                 {
-                    if (TankController.LocalTank != null)
+                    _currentTarget = TankController.LocalTank;
+
+                    if (MatchManager.Instance.Phase == MatchPhase.PreRound)
                     {
                         TriggerPreRoundPan();
-                        _hasTriggeredPreRound = true;
+                    }
+                    else if (MatchManager.Instance.Phase == MatchPhase.Playing)
+                    {
+                        _cam.enabled = true;
+                        _basePosition = _originLocalPos;
+                        _cam.orthographicSize = _defaultZoomSize;
                     }
                 }
-                else if (MatchManager.Instance.Phase == MatchPhase.Playing && !_cam.enabled)
+                
+                if (TankController.LocalTank == null && _currentTarget != null)
                 {
-                    _cam.enabled = true;
-                    _basePosition = _originLocalPos;
-                    _cam.orthographicSize = _defaultZoomSize;
-                }
-                else if (MatchManager.Instance.Phase != MatchPhase.PreRound)
-                {
-                    _hasTriggeredPreRound = false; 
+                    _currentTarget = null;
                 }
             }
 
@@ -95,7 +97,7 @@ namespace Game.Presentation
         {
             DOTween.Kill(this);
 
-            Vector3 tankPos = TankController.LocalTank.transform.position;
+            Vector3 tankPos = _currentTarget.transform.position;
             tankPos.z = _originLocalPos.z;
 
             _basePosition = tankPos;

@@ -1,0 +1,8 @@
+<ui:UXML
+        xmlns:fba="Unity.Services.RemoteConfig.Authoring.Editor.Assets.UI.DeploymentConfigInspectorFooter"
+        xmlns:ui="UnityEngine.UIElements"
+        xmlns="UnityEngine.UIElements"
+        editor-extension-mode="True">
+    <ui:TextField name="config-body" multiline="true" readonly="true" />
+    <fba:DeploymentConfigInspectorFooter />
+</ui:UXML>

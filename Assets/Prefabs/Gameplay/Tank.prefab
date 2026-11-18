@@ -413,6 +413,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 696c4c13edd7dd44f82a59f8c29be44f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HealthComponent
+  _explosionPrefab: {fileID: 3555059663887164575, guid: f97a42240bff188468f58ccb2e9ac2a2, type: 3}
   _IsAlive:
     _value: 1
 --- !u!114 &5230383912970081964

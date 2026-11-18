@@ -12,7 +12,8 @@ namespace Game.Meta
         PreRound,
         Playing,
         RoundEnded,
-        Ended
+        Ended,
+        PostMatch
     }
 
     public class MatchManager : NetworkBehaviour, IPlayerLeft
@@ -36,8 +37,7 @@ namespace Game.Meta
         [Networked, OnChangedRender(nameof(OnMatchScoreUpdatePublish))] 
         public int ScoreTeam1 { get; set; }
 
-        [Networked, OnChangedRender(nameof(OnMatchEndedEvent))]
-        public int Winner { get; set; }
+        [Networked] public int Winner { get; set; } 
         
         [Networked] public int AliveTeam0 { get; set; }
         [Networked] public int AliveTeam1 { get; set; }
@@ -45,6 +45,8 @@ namespace Game.Meta
         [Networked] public TickTimer Timer { get; set; } 
 
         private int _totalRounds => MatchSettings.Instance != null ? (int)MatchSettings.Instance.Rounds : 3;
+        
+        private int _scoreToWin => (_totalRounds / 2) + 1; 
 
         public override void Spawned()
         {
@@ -97,6 +99,7 @@ namespace Game.Meta
             AliveTeam1 = 2;
             
             Debug.Log($"[Match] Round {CurrentRound} starting. Pre-round countdown begun.");
+            GameLauncher.Instance._liveOpsManager.PublishRemoteConfigEvent();
         }
 
         private void OnPlayerDied(PlayerDiedEvent evt)
@@ -129,19 +132,22 @@ namespace Game.Meta
             if (winnerTeam == 0) ScoreTeam0++;
             else ScoreTeam1++;
 
-            LastRoundWinner = winnerTeam;
+            LastRoundWinner = winnerTeam + 1;
+            
             Phase = MatchPhase.RoundEnded;
-    
             Timer = TickTimer.CreateFromSeconds(Runner, 4f); 
         }
 
         public void EndMatch()
         {
-            if (Phase == MatchPhase.Ended) return;
+            if (Phase == MatchPhase.Ended || Phase == MatchPhase.PostMatch) return; 
+            
+            CalculateWinner();
 
             _spawner.DespawnAll();
             Phase = MatchPhase.Ended;
-            Timer = TickTimer.CreateFromSeconds(Runner, 3f);
+
+            Timer = TickTimer.CreateFromSeconds(Runner, 4f); 
         }
 
         public void PlayerLeft(PlayerRef player)
@@ -162,12 +168,18 @@ namespace Game.Meta
             }
             else if (Phase == MatchPhase.RoundEnded)
             {
-                if (CurrentRound >= _totalRounds) EndMatch();
-                else StartRound();
+                if (ScoreTeam0 >= _scoreToWin || ScoreTeam1 >= _scoreToWin)
+                {
+                    EndMatch();
+                }
+                else
+                {
+                    StartRound();
+                }
             }
             else if (Phase == MatchPhase.Ended)
             {
-                CalculateWinner();
+                Phase = MatchPhase.PostMatch;
             }
         }
         
@@ -178,6 +190,21 @@ namespace Game.Meta
             {
                 if (bullet.Object != null && bullet.Object.IsValid)
                     Runner.Despawn(bullet.Object);
+            }
+        }
+
+        private void OnPhaseChanged()
+        {
+            UpdateLocalVoiceChannel();
+
+            if (Phase == MatchPhase.RoundEnded)
+                GameLauncher.Instance.EventBus.Publish(new SfxRequestedEvent(ESfx.RoundEnd));
+
+            if (Phase == MatchPhase.PostMatch)
+            {
+                GameLauncher.Instance.EventBus.Publish(new MatchEndedEvent(Winner));
+                GameLauncher.Instance.EventBus.Publish(new MusicRequestedEvent(EMusicTrack.None));
+                GameLauncher.Instance.EventBus.Publish(new SfxRequestedEvent(ESfx.MatchEnd));
             }
         }
 
@@ -194,20 +221,7 @@ namespace Game.Meta
         }
 
         private void OnMatchScoreUpdatePublish() => GameLauncher.Instance.EventBus.Publish(new MatchScoreUpdateEvent(ScoreTeam0, ScoreTeam1));
-        private void OnMatchEndedEvent()
-        {
-            GameLauncher.Instance.EventBus.Publish(new MatchEndedEvent(Winner));
-            GameLauncher.Instance.EventBus.Publish(new MusicRequestedEvent(EMusicTrack.None));
-            GameLauncher.Instance.EventBus.Publish(new SfxRequestedEvent(ESfx.MatchEnd));
-        }
 
-        private void OnPhaseChanged()
-        {
-            UpdateLocalVoiceChannel();
-
-            if (Phase == MatchPhase.RoundEnded)
-                GameLauncher.Instance.EventBus.Publish(new SfxRequestedEvent(ESfx.RoundEnd));
-        }
         public void ReturnToLobby() => Runner.LoadScene(SceneRef.FromIndex(_lobbySceneIndex));
 
         private void CalculateWinner()

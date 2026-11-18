@@ -1,7 +1,7 @@
-using System.Collections.Generic;
 using Fusion;
 using Game.Core;
 using Game.Foundation;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Game.Simulation
@@ -34,6 +34,7 @@ namespace Game.Simulation
         private void Awake()
         {
             _radius = _visual.GetComponent<SpriteRenderer>().bounds.extents.x;
+            GameLauncher.Instance.EventBus.Subscribe<RemoteConfigEvent>(OnRemoteConfigEvent);
         }
 
         public void Init(Vector2 origin, Vector2 direction, PlayerRef shooter, NetworkId ignoredRoot)
@@ -139,6 +140,20 @@ namespace Game.Simulation
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
             ActiveBullets.Remove(this);
+        }
+
+        private void OnRemoteConfigEvent(RemoteConfigEvent evt)
+        {
+            _speed = evt.bullet_speed;
+            _lifetime = evt.bullet_lifetime;
+        }
+
+        private void OnDestroy()
+        {
+            if (GameLauncher.Instance != null)
+            {
+                GameLauncher.Instance.EventBus.Unsubscribe<RemoteConfigEvent>(OnRemoteConfigEvent);
+            }
         }
     }
 }
