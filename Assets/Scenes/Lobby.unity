@@ -169,6 +169,7 @@ GameObject:
   - component: {fileID: 69751505}
   - component: {fileID: 69751504}
   - component: {fileID: 69751503}
+  - component: {fileID: 1243548805}
   m_Layer: 5
   m_Name: JoinButton
   m_TagString: Untagged
@@ -427,6 +428,7 @@ GameObject:
   - component: {fileID: 109100042}
   - component: {fileID: 109100041}
   - component: {fileID: 109100040}
+  - component: {fileID: 1651787057}
   m_Layer: 5
   m_Name: Right Arrow
   m_TagString: Untagged
@@ -2353,6 +2355,7 @@ GameObject:
   - component: {fileID: 727744593}
   - component: {fileID: 727744592}
   - component: {fileID: 727744591}
+  - component: {fileID: 1009496604}
   m_Layer: 5
   m_Name: Left Arrow
   m_TagString: Untagged
@@ -2813,6 +2816,7 @@ GameObject:
   - component: {fileID: 779054492}
   - component: {fileID: 779054491}
   - component: {fileID: 779054495}
+  - component: {fileID: 1714059678}
   m_Layer: 5
   m_Name: Play
   m_TagString: Untagged
@@ -2952,6 +2956,7 @@ GameObject:
   - component: {fileID: 845733815}
   - component: {fileID: 845733814}
   - component: {fileID: 845733813}
+  - component: {fileID: 783120841}
   m_Layer: 5
   m_Name: JoinButton
   m_TagString: Untagged
@@ -3740,6 +3745,7 @@ GameObject:
   - component: {fileID: 1253842801}
   - component: {fileID: 1253842800}
   - component: {fileID: 1253842799}
+  - component: {fileID: 946611365}
   m_Layer: 5
   m_Name: Right Arrow
   m_TagString: Untagged
@@ -4947,6 +4953,7 @@ GameObject:
   - component: {fileID: 1704128888}
   - component: {fileID: 1704128887}
   - component: {fileID: 1704128886}
+  - component: {fileID: 966255290}
   m_Layer: 5
   m_Name: Right Arrow
   m_TagString: Untagged
@@ -5481,6 +5488,7 @@ GameObject:
   - component: {fileID: 1951755945}
   - component: {fileID: 1951755944}
   - component: {fileID: 1951755943}
+  - component: {fileID: 504476849}
   m_Layer: 5
   m_Name: Left Arrow
   m_TagString: Untagged
@@ -5883,6 +5891,7 @@ GameObject:
   - component: {fileID: 2023090000}
   - component: {fileID: 2023089999}
   - component: {fileID: 2023089998}
+  - component: {fileID: 921417706}
   m_Layer: 5
   m_Name: Left Arrow
   m_TagString: Untagged
@@ -6004,6 +6013,7 @@ GameObject:
   - component: {fileID: 2053531564}
   - component: {fileID: 2053531563}
   - component: {fileID: 2053531562}
+  - component: {fileID: 1597408640}
   m_Layer: 5
   m_Name: Left Arrow
   m_TagString: Untagged
@@ -6125,6 +6135,7 @@ GameObject:
   - component: {fileID: 2060433705}
   - component: {fileID: 2060433704}
   - component: {fileID: 2060433703}
+  - component: {fileID: 1553350143}
   m_Layer: 5
   m_Name: Right Arrow
   m_TagString: Untagged
@@ -6460,3 +6471,135 @@ SceneRoots:
   - {fileID: 1979712965}
   - {fileID: 269474319}
   - {fileID: 1435535409}
+--- !u!114 &1243548805
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 69751501}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx
+--- !u!114 &1651787057
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 109100038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx
+--- !u!114 &1009496604
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 727744589}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx
+--- !u!114 &1714059678
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 779054489}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx
+--- !u!114 &783120841
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 845733811}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx
+--- !u!114 &946611365
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1253842797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx
+--- !u!114 &966255290
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1704128884}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx
+--- !u!114 &504476849
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1951755941}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx
+--- !u!114 &921417706
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2023089996}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx
+--- !u!114 &1597408640
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053531560}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx
+--- !u!114 &1553350143
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2060433701}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx

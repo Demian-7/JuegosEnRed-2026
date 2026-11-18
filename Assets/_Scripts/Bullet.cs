@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 using Fusion;
+using Game.Core;
+using Game.Foundation;
 using UnityEngine;
 
 namespace Game.Simulation
@@ -118,11 +120,17 @@ namespace Game.Simulation
 
             if (Hit && _hitEffectPrefab != null)
                 Instantiate(_hitEffectPrefab, HitPoint, Quaternion.identity);
+
+            if (Hit)
+                GameLauncher.Instance.EventBus.Publish(new SfxRequestedEvent(ESfx.BulletImpact));
         }
 
         public override void Spawned()
         {
             _visual.SetActive(!Hit);
+
+            if (!Hit)
+                GameLauncher.Instance.EventBus.Publish(new SfxRequestedEvent(ESfx.Shoot));
 
             if (Object.HasStateAuthority)
                 ActiveBullets.Add(this);

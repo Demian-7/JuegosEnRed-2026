@@ -24,7 +24,7 @@ namespace Game.Meta
         [SerializeField] private EndScreenManager _endScreenManager;
         [SerializeField] private int _lobbySceneIndex = 1;
 
-        [Networked, OnChangedRender(nameof(UpdateLocalVoiceChannel))] 
+        [Networked, OnChangedRender(nameof(OnPhaseChanged))]
         public MatchPhase Phase { get; set; }
         
         [Networked] public int CurrentRound { get; set; }
@@ -60,11 +60,16 @@ namespace Game.Meta
             _endScreenManager.Init(GameLauncher.Instance.EventBus);
 
             UpdateLocalVoiceChannel();
+
+            GameLauncher.Instance.EventBus.Publish(new MusicRequestedEvent(EMusicTrack.Gameplay));
         }
 
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
             if (Instance == this) Instance = null;
+
+            if (GameLauncher.Instance != null)
+                GameLauncher.Instance.EventBus.Publish(new MusicRequestedEvent(EMusicTrack.Menu));
 
             if (Object.HasStateAuthority)
             {
@@ -189,7 +194,20 @@ namespace Game.Meta
         }
 
         private void OnMatchScoreUpdatePublish() => GameLauncher.Instance.EventBus.Publish(new MatchScoreUpdateEvent(ScoreTeam0, ScoreTeam1));
-        private void OnMatchEndedEvent() => GameLauncher.Instance.EventBus.Publish(new MatchEndedEvent(Winner));
+        private void OnMatchEndedEvent()
+        {
+            GameLauncher.Instance.EventBus.Publish(new MatchEndedEvent(Winner));
+            GameLauncher.Instance.EventBus.Publish(new MusicRequestedEvent(EMusicTrack.None));
+            GameLauncher.Instance.EventBus.Publish(new SfxRequestedEvent(ESfx.MatchEnd));
+        }
+
+        private void OnPhaseChanged()
+        {
+            UpdateLocalVoiceChannel();
+
+            if (Phase == MatchPhase.RoundEnded)
+                GameLauncher.Instance.EventBus.Publish(new SfxRequestedEvent(ESfx.RoundEnd));
+        }
         public void ReturnToLobby() => Runner.LoadScene(SceneRef.FromIndex(_lobbySceneIndex));
 
         private void CalculateWinner()

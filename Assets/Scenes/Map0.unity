@@ -739,6 +739,7 @@ MonoBehaviour:
   _lobbySceneIndex: 1
   _Phase: 0
   _CurrentRound: 0
+  _LastRoundWinner: 0
   _ScoreTeam0: 0
   _ScoreTeam1: 0
   _Winner: 0
@@ -1008,6 +1009,9 @@ MonoBehaviour:
   _maxOffset: 0.25
   _traumaDecay: 2.2
   _noiseFrequency: 20
+  _startZoomSize: 1.5
+  _defaultZoomSize: 6.5
+  _tweenEase: 4
 --- !u!1001 &1335207290
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1432,9 +1436,17 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 2651223930049308205, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4575592807817705227, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5888344735406010266, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6099982560534529582, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
       propertyPath: m_Name
@@ -1543,6 +1555,14 @@ PrefabInstance:
     - target: {fileID: 8729680624803788684, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8896956175576651649, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8976738001774455524, guid: 9bdf2da0efee44c45bfccb167750b0c5, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

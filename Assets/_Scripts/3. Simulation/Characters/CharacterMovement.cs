@@ -80,6 +80,9 @@ namespace Game.Simulation
         private void OnDashStateChanged()
         {
             GameLauncher.Instance.EventBus.Publish(new DashStateChangedEvent(CanDash));
+
+            if (!CanDash)
+                GameLauncher.Instance.EventBus.Publish(new SfxRequestedEvent(ESfx.Dash));
         }
     }
 }

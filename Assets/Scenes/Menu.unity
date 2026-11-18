@@ -181,6 +181,7 @@ GameObject:
   m_Component:
   - component: {fileID: 170462031}
   - component: {fileID: 170462029}
+  - component: {fileID: 170462032}
   m_Layer: 0
   m_Name: NetworkRunner
   m_TagString: Untagged
@@ -221,6 +222,42 @@ Transform:
   - {fileID: 243891368}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &170462032
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 170462027}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 43194e8bc706f46be9ae80b9d304ee7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Core.AudioService
+  _sfx:
+  - Sfx: 0
+    Clip: {fileID: 8300000, guid: 8f600ccde90af4af8acc71e5583080f2, type: 3}
+    Volume: 1
+  - Sfx: 1
+    Clip: {fileID: 8300000, guid: cb0f4703702284f0ab8145978a24cabc, type: 3}
+    Volume: 1
+  - Sfx: 2
+    Clip: {fileID: 8300000, guid: b828ffcf04eed4c8e9acac9ff3a21bc3, type: 3}
+    Volume: 1
+  - Sfx: 3
+    Clip: {fileID: 8300000, guid: 3b08cb964eca243c887d838b48a013cd, type: 3}
+    Volume: 1
+  - Sfx: 5
+    Clip: {fileID: 8300000, guid: 6d416fbb64f14449baa691b2ee0233d5, type: 3}
+    Volume: 0.637
+  - Sfx: 6
+    Clip: {fileID: 8300000, guid: a196318a02f51436fb644c72ad64b28f, type: 3}
+    Volume: 1
+  _menuMusic: {fileID: 8300000, guid: 1377997d656d7410da1016ff5bbe4a34, type: 3}
+  _menuMusicVolume: 0.5
+  _gameplayMusic: {fileID: 8300000, guid: a4f2923a9e7de4017ace9b086f4d9a3c, type: 3}
+  _gameplayMusicVolume: 0.5
+  _musicFadeTime: 0.5
 --- !u!1 &243891366
 GameObject:
   m_ObjectHideFlags: 0
@@ -481,6 +518,18 @@ MonoBehaviour:
     m_VarianceClampScale: 0.9
     m_ContrastAdaptiveSharpening: 0
   m_Version: 2
+--- !u!114 &420238659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466641818}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx
 --- !u!1 &443468827
 GameObject:
   m_ObjectHideFlags: 0
@@ -590,6 +639,7 @@ GameObject:
   - component: {fileID: 466641822}
   - component: {fileID: 466641821}
   - component: {fileID: 466641820}
+  - component: {fileID: 420238659}
   m_Layer: 5
   m_Name: JoinGame
   m_TagString: Untagged
@@ -1819,6 +1869,7 @@ GameObject:
   - component: {fileID: 1347295013}
   - component: {fileID: 1347295012}
   - component: {fileID: 1347295011}
+  - component: {fileID: 1710081572}
   m_Layer: 5
   m_Name: CreateGame
   m_TagString: Untagged
@@ -2360,6 +2411,18 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1674648176}
   m_CullTransparentMesh: 1
+--- !u!114 &1710081572
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1347295009}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 37d9503c4a03640ab9d16798462b0505, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::Game.Presentation.UIButtonSfx
 --- !u!1 &1727202272
 GameObject:
   m_ObjectHideFlags: 0

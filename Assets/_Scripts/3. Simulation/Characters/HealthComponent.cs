@@ -30,11 +30,13 @@ namespace Game.Simulation
         [Rpc(RpcSources.StateAuthority, RpcTargets.All)]
         private void Rpc_TriggerDeathPresentation()
         {
-            CameraRig.AddTrauma(1f); 
-            
+            CameraRig.AddTrauma(1f);
+
             gameObject.SetActive(false);
-            
-            // should also trigger death VFX/SFX here.
+
+            GameLauncher.Instance.EventBus.Publish(new SfxRequestedEvent(ESfx.TankDeath));
+
+            // should also trigger death VFX here.
         }
     }
 }
