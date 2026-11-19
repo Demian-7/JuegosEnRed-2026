@@ -23,6 +23,8 @@ public class AbilityController : NetworkBehaviour
     [Networked, OnChangedRender(nameof(OnReloadingStatePublish))]
     public bool Reloading { get; set; }
     private float _reloadTimer = 0;
+    private float _bulletSpeed = 10f;
+    private float _bulletLifetime = 10f;
 
 
     private NetworkRunner _runner;
@@ -87,7 +89,7 @@ public class AbilityController : NetworkBehaviour
         Vector2 spawnPos = (Vector2)transform.position + dir * 1f;
         
         NetworkObject bullet = Runner.Spawn(_bulletPrefab, spawnPos, Quaternion.identity);
-        bullet.GetComponent<Bullet>().Init(spawnPos, dir, shooter, Object.Id);
+        bullet.GetComponent<Bullet>().Init(spawnPos, dir, shooter, Object.Id, _bulletSpeed, _bulletLifetime);
     }
     
     private void OnCurrentBulletsUpdatePublish()
@@ -112,6 +114,8 @@ public class AbilityController : NetworkBehaviour
     {
         MaxBullets = evt.ability_max_bullets;
         ReloadTime = evt.ability_reload_time;
+        _bulletSpeed = evt.bullet_speed;
+        _bulletLifetime = evt.bullet_lifetime;
     }
 
     private void OnDestroy()

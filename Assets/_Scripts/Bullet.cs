@@ -10,8 +10,6 @@ namespace Game.Simulation
     {
         public static readonly HashSet<Bullet> ActiveBullets = new();
 
-        [SerializeField] private float _speed = 10f;
-        [SerializeField] private float _lifetime = 2f;
         [SerializeField] private LayerMask _wallMask;
         [SerializeField] private LayerMask _hitboxMask;
         [SerializeField] private GameObject _visual;
@@ -21,6 +19,8 @@ namespace Game.Simulation
         [Networked, OnChangedRender(nameof(OnHitChanged))] private NetworkBool Hit { get; set; }
         [Networked] private Vector2 HitPoint { get; set; }
 
+        private float _speed;
+        private float _lifetime;
         private Vector2 _origin;
         private Vector2 _direction;
         private int _fireTick;
@@ -34,11 +34,12 @@ namespace Game.Simulation
         private void Awake()
         {
             _radius = _visual.GetComponent<SpriteRenderer>().bounds.extents.x;
-            GameLauncher.Instance.EventBus.Subscribe<RemoteConfigEvent>(OnRemoteConfigEvent);
         }
 
-        public void Init(Vector2 origin, Vector2 direction, PlayerRef shooter, NetworkId ignoredRoot)
+        public void Init(Vector2 origin, Vector2 direction, PlayerRef shooter, NetworkId ignoredRoot, float speed, float lifetime)
         {
+            _speed = speed;
+            _lifetime = lifetime;
             _origin = origin;
             _direction = direction;
             _shooter = shooter;
@@ -140,20 +141,6 @@ namespace Game.Simulation
         public override void Despawned(NetworkRunner runner, bool hasState)
         {
             ActiveBullets.Remove(this);
-        }
-
-        private void OnRemoteConfigEvent(RemoteConfigEvent evt)
-        {
-            _speed = evt.bullet_speed;
-            _lifetime = evt.bullet_lifetime;
-        }
-
-        private void OnDestroy()
-        {
-            if (GameLauncher.Instance != null)
-            {
-                GameLauncher.Instance.EventBus.Unsubscribe<RemoteConfigEvent>(OnRemoteConfigEvent);
-            }
         }
     }
 }
