@@ -40,10 +40,17 @@ namespace Game.Meta
                 return;
             }
 
-            if (MatchSettings.Instance.TeamMode == ETeamSelectionMode.Manual && !ValidateManualTeams())
+            if (MatchSettings.Instance.TeamMode == ETeamSelectionMode.Manual)
             {
-                Debug.Log("Can't start: Manual teams are not balanced 2v2.");
-                return;
+                if (!ValidateManualTeams())
+                {
+                    Debug.Log("Can't start: Manual teams are not balanced 2v2.");
+                    return;
+                }
+            }
+            else if (MatchSettings.Instance.TeamMode == ETeamSelectionMode.Random)
+            {
+                TeamAssignmentService.AssignRandomTeams(Runner);
             }
 
 

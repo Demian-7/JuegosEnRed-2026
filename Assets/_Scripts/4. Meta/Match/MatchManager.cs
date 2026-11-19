@@ -116,14 +116,16 @@ namespace Game.Meta
             else if (AliveTeam1 <= 0) EndRound(0);
         }
         
-        private int GetTeamIndex(PlayerRef player)
-        {
-            var sorted = new List<PlayerRef>(Runner.ActivePlayers);
-            sorted.Sort((a, b) => a.PlayerId.CompareTo(b.PlayerId));
-            int index = sorted.IndexOf(player);
-            if (index < 0) return -1;
-            return (index < 2) ? 0 : 1;
-        }
+        // private int GetTeamIndex(PlayerRef player)
+        // {
+        //     var sorted = new List<PlayerRef>(Runner.ActivePlayers);
+        //     sorted.Sort((a, b) => a.PlayerId.CompareTo(b.PlayerId));
+        //     int index = sorted.IndexOf(player);
+        //     if (index < 0) return -1;
+        //     return (index < 2) ? 0 : 1;
+        // }
+        
+        private int GetTeamIndex(PlayerRef player) => TeamAssignmentService.GetTeamIndex(player, Runner);
 
         public void EndRound(int winnerTeam)
         {

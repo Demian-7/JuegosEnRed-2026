@@ -17,7 +17,7 @@ namespace Game.Simulation
         [SerializeField] private AbilityController _ability;
         [SerializeField] private NetworkPrefabRef _bulletPrefab;
 
-        private ITeammatePairing _pairing = new StubTeammatePairing();
+        private ITeammatePairing _pairing = new TeamAssignmentService();
 
         public override void Spawned()
         {
